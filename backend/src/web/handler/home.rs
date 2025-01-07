@@ -19,6 +19,8 @@ pub async fn post_login(
         token = crate::repository::token::create_token_for_player(&ctx.db, player.id).await;
     }
     if let Some(token) = token {
+        crate::repository::player::alter_last_login(&ctx.db, player.id).await?;
+
         Ok(Json(LoginResponse {
             id: player.id,
             token,

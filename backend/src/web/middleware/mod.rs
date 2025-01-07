@@ -40,7 +40,6 @@ pub async fn authorization_middleware(
         let player = get_player_by_token(&app_state.db, token).await;
         if let Some(player) = player {
             req.extensions_mut().insert(Arc::new(player));
-
             return Ok(next.run(req).await);
         }
     }
