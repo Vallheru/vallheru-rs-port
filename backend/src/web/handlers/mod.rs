@@ -1,7 +1,11 @@
 use std::sync::Arc;
 
-use crate::web::{ApiContext, Result};
-use axum::{extract::State, Json};
+use crate::web::{ApiContext, Error, Result};
+use axum::{
+    extract::State,
+    http::{StatusCode, Uri},
+    Json,
+};
 
 use vallheru::api::{LoginRequest, LoginResponse};
 
@@ -27,9 +31,13 @@ pub async fn post_login(
             username: player.username,
         }))
     } else {
-        Err(crate::web::Error::InternalServerError(format!(
+        Err(crate::web::Error::InternalServer(format!(
             "cannot get token for the player id: {}",
             player.id
         )))
     }
+}
+
+pub async fn not_found_fallback() -> Error {
+    Error::NotFound
 }

@@ -29,7 +29,8 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
     });
     let app = Router::new()
         .nest("/api", api_router())
-        .with_state(shared_state);
+        .with_state(shared_state)
+        .fallback(handlers::not_found_fallback);
 
     axum::serve(listener, app)
         .await
