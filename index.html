@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text RPG Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans">
+    <!-- Home Page -->
+    <div id="home-page" class="min-h-screen flex flex-col items-center justify-center">
+        <header class="text-center">
+            <img src="./logo.webp" alt="Dragon Logo" class="h-32 mx-auto mb-4">
+            <h1 class="text-4xl font-bold text-amber-500">Text RPG Adventure</h1>
+            <p class="text-lg mt-2">Embark on a journey like no other</p>
+        </header>
+        <nav class="mt-8">
+            <a href="#login-page" class="bg-amber-500 text-gray-900 px-4 py-2 rounded shadow-lg hover:bg-amber-600">Login</a>
+            <a href="#register-page" class="bg-amber-500 text-gray-900 px-4 py-2 rounded shadow-lg hover:bg-amber-600 ml-4">Register</a>
+        </nav>
+    </div>
+
+    <!-- Registration Page -->
+    <div id="register-page" class="min-h-screen flex flex-col items-center justify-center hidden">
+        <header class="text-center">
+            <img src="dragon-logo.png" alt="Dragon Logo" class="h-24 mx-auto mb-4">
+            <h1 class="text-3xl font-bold text-amber-500">Create Your Account</h1>
+        </header>
+        <form class="bg-gray-800 p-6 rounded-lg shadow-lg w-80 mt-4">
+            <div class="mb-4">
+                <label for="username" class="block mb-2">Username</label>
+                <input type="text" id="username" name="username" class="w-full px-3 py-2 bg-gray-700 text-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+            <div class="mb-4">
+                <label for="email" class="block mb-2">Email</label>
+                <input type="email" id="email" name="email" class="w-full px-3 py-2 bg-gray-700 text-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+            <div class="mb-4">
+                <label for="password" class="block mb-2">Password</label>
+                <input type="password" id="password" name="password" class="w-full px-3 py-2 bg-gray-700 text-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+            <button type="submit" class="w-full bg-amber-500 text-gray-900 px-4 py-2 rounded shadow-lg hover:bg-amber-600">Register</button>
+        </form>
+        <a href="#login-page" class="mt-4 text-amber-500 hover:underline">Already have an account? Login</a>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="min-h-screen flex flex-col items-center justify-center hidden">
+        <header class="text-center">
+            <img src="dragon-logo.png" alt="Dragon Logo" class="h-24 mx-auto mb-4">
+            <h1 class="text-3xl font-bold text-amber-500">Login to Your Account</h1>
+        </header>
+        <form class="bg-gray-800 p-6 rounded-lg shadow-lg w-80 mt-4">
+            <div class="mb-4">
+                <label for="login-username" class="block mb-2">Username</label>
+                <input type="text" id="login-username" name="username" class="w-full px-3 py-2 bg-gray-700 text-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+            <div class="mb-4">
+                <label for="login-password" class="block mb-2">Password</label>
+                <input type="password" id="login-password" name="password" class="w-full px-3 py-2 bg-gray-700 text-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+            <button type="submit" class="w-full bg-amber-500 text-gray-900 px-4 py-2 rounded shadow-lg hover:bg-amber-600">Login</button>
+        </form>
+        <a href="#register-page" class="mt-4 text-amber-500 hover:underline">Don't have an account? Register</a>
+    </div>
+</body>
+</html>
