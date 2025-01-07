@@ -12,6 +12,9 @@ frontend-serve:
 frontend-build:
 	cd frontend && trunk build --release
 
+backend-build:
+	cargo build --bin backend
+
 backend-watch:
 	cargo watch -q -c -w backend/src/ -x "run --bin backend"
 
