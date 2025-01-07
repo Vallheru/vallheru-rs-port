@@ -1,15 +1,16 @@
 use crate::web::Error;
 
+use vallheru::model::Player;
+
 pub async fn get_user_by_email_and_password(
     db: &sqlx::PgPool,
     email: &str,
     pass: &str,
-) -> crate::web::Result<vallheru::model::Player> {
-    let player =
-        sqlx::query_as::<_, vallheru::model::Player>(r"SELECT * FROM player WHERE email=$1")
-            .bind(email)
-            .fetch_one(db)
-            .await;
+) -> crate::web::Result<Player> {
+    let player = sqlx::query_as::<_, Player>(r"SELECT * FROM player WHERE email=$1")
+        .bind(email)
+        .fetch_one(db)
+        .await;
 
     match player {
         Ok(player) => {
@@ -30,3 +31,16 @@ pub async fn get_user_by_email_and_password(
     }
 }
 
+pub async fn get_player_by_token(db: &sqlx::PgPool, token: &str) -> Option<Player> {
+    sqlx::query_as::<_, Player>(
+        r"SELECT * 
+            FROM player AS p 
+            LEFT JOIN token AS t ON p.id=t.player_id 
+            WHERE t.token=$1 AND valid_until>NOW()+'5 minutes'::INTERVAL",
+    )
+    .bind(token)
+    .fetch_one(db)
+    .await
+    .map(|res| Some(res))
+    .unwrap_or(None)
+}

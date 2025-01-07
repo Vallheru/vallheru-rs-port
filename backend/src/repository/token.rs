@@ -1,3 +1,5 @@
+use vallheru::model::Player;
+
 pub async fn get_active_token_for_player(db: &sqlx::PgPool, player_id: i32) -> Option<String> {
     let token = sqlx::query_as::<_, vallheru::model::Token>(
         r"SELECT * FROM token WHERE player_id=$1 AND valid_until>NOW()+'5 minutes'::INTERVAL",

@@ -1,16 +1,10 @@
-use std::sync::Arc;
-
-use crate::web::{ApiContext, Error, Result};
-use axum::{
-    extract::State,
-    http::{StatusCode, Uri},
-    Json,
-};
+use crate::web::{AppState, Result};
+use axum::{extract::State, Json};
 
 use vallheru::api::{LoginRequest, LoginResponse};
 
 pub async fn post_login(
-    State(ctx): State<Arc<ApiContext>>,
+    State(ctx): State<AppState>,
     req: Json<LoginRequest>,
 ) -> Result<Json<LoginResponse>> {
     let player = crate::repository::player::get_user_by_email_and_password(
@@ -36,8 +30,4 @@ pub async fn post_login(
             player.id
         )))
     }
-}
-
-pub async fn not_found_fallback() -> Error {
-    Error::NotFound
 }
