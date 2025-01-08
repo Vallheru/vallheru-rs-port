@@ -1,10 +1,11 @@
-use leptos::prelude::*;
+use leptos::{html, logging::log, prelude::*, task::spawn_local};
 use leptos_meta::*;
 use leptos_router::{
     components::{Route, Router, Routes},
     path,
 };
 use vallheru::name_generator::random_name;
+use web_sys::SubmitEvent;
 
 use crate::player_state;
 
@@ -25,6 +26,7 @@ fn HomeRouterContent() -> impl IntoView {
                 <Route path=path!("/links") view=Links/>
                 <Route path=path!("/news") view=ReadNews/>
                 <Route path=path!("/reset-password") view=ResetPassword/>
+                <Route path=path!("/welcome") view=Welcome/>
             </Routes>
         </Router>
     }
@@ -274,13 +276,40 @@ fn Register() -> impl IntoView {
 
 #[component]
 fn Login() -> impl IntoView {
+    let email_element: NodeRef<html::Input> = NodeRef::new();
+    let password_element: NodeRef<html::Input> = NodeRef::new();
+    let (disabled_button, set_disabled_button) = signal(false);
+
+    let login_submit = move |ev: SubmitEvent| {
+        ev.prevent_default();
+        let email = email_element
+            .get()
+            .expect("<input email> should be mounted")
+            .value();
+        let pass = password_element
+            .get()
+            .expect("<input email> should be mounted")
+            .value();
+
+        spawn_local(async move {
+            println!("Sending");
+            set_disabled_button.set(true);
+            let req = crate::app::api::login(&email, &pass).await.unwrap();
+
+            set_disabled_button.set(false);
+            leptos::logging::log!("{:?}", req);
+        });
+    };
+
     view! {
         <div class="lg:w-3/5 md:w-full text-black alegreya-sc-medium-italic">
             <div class="text-4xl text-center mb-4">"Enter Vallheru"</div>
 
             <p class="text-lg text-center mt-8">Step into a world of imagination and adventure. Log in to continue your journey!</p>
 
-            <form class="max-w-sm mx-auto mt-14">
+            <form
+                on:submit=login_submit
+                class="max-w-sm mx-auto mt-14">
                 <div class={"mb-8 ".to_owned() + COMMON_FORM_CLASS}>
                     <label for="login-email" class="text-black pr-3">Email: </label>
                     <input
@@ -288,6 +317,7 @@ fn Login() -> impl IntoView {
                         id="login-email"
                         class="text-black bg-transparent outline-none border-none"
                         placeholder="example@email.com"
+                        node_ref=email_element
                         required />
                 </div>
 
@@ -297,11 +327,15 @@ fn Login() -> impl IntoView {
                         type="password"
                         id="login-password"
                         class="text-black bg-transparent outline-none border-none"
-                        placeholder="password" required />
+                        placeholder="password"
+                        node_ref=password_element
+                        required />
                 </div>
 
                 <div class="mb-3">
-                    <button class={"".to_owned() + COMMON_BUTTON_CLASS }>
+                    <button
+                        class={"".to_owned() + COMMON_BUTTON_CLASS }
+                        disabled=move || disabled_button.get()>
                         Log in
                     </button>
                 </div>
@@ -384,5 +418,12 @@ fn ReadNews() -> impl IntoView {
 fn ResetPassword() -> impl IntoView {
     view! {
         <div>ResetPassword</div>
+    }
+}
+
+#[component]
+fn Welcome() -> impl IntoView {
+    view! {
+        <div>Welcome</div>
     }
 }
