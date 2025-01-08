@@ -1,48 +1,16 @@
-use crate::app::player_state::ContextStoreFields; // generated
 use leptos::prelude::*;
 use leptos_meta::*;
 use leptos_router::{
     components::{Route, Router, Routes},
     path,
 };
-use reactive_stores::Store;
 use vallheru::name_generator::random_name;
 
 use crate::player_state;
 
-const COMMON_FORM_CLASS: &str = "alegreya-sc-medium-italic border-vallheru-creme-300 
-focus:ring-vallheru-creme-100 focus:border-vallheru-creme-200 block text-sm rounded-full
-outline-none border-2 p-2 px-4 placeholder:text-gray-600 w-full";
-
-#[component]
-pub fn HomeTemplate() -> impl IntoView {
-    view! {
-        <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
-        <Body
-            attr:class="text-zinc-400 min-h-screen w-full
-                bg-gradient-to-b from-home-bg-100 from-20% via-home-bg-300 via-50% via-home-bg-500 via-70% via-home-bg-700 to-home-bg-900" />
-
-        <div class="flex min-h-screen w-full items-center justify-center">
-            <div class="relative my-12 text-lg text-vallheru-creme-100 h-[779px] lg:w-[1400px] md:w-[800px] sm:w-96">
-
-                <Navigation />
-
-                <div class="h-full w-full rounded-xl bg-home-dragon bg-no-repeat bg-cover bg-center flex flex-row shadow-3xl">
-                    <div class="ml-64 w-80 h-full shadow-3xl no-top-bottom-shadow px-1
-                    bg-gradient-to-b from-home-content-bg-200 from-70% via-home-content-bg-400 to-95% to-home-content-bg-700">
-                        <div class="h-full bg-gradient-to-b from-[#5d4b37] to-[#ddca8f] px-0.5">
-                            <div class="relative h-full bg-gradient-to-b from-home-content-bg-200 from-70% via-home-content-bg-400 to-95% to-home-content-bg-700">
-                                <div class="pt-20 px-8">
-                                    <Content />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-}
+const COMMON_FORM_CLASS: &str = "px-4 py-2 rounded-md border-2 border-[#1e1a20] bg-gradient-to-r from-vallheru-creme-100 to-vallheru-creme-400";
+const COMMON_BUTTON_CLASS: &str =
+    "bg-[#322c33] text-xl text-white rounded-full py-3 px-10 hover:text-black";
 
 #[component(transparent)]
 fn HomeRouterContent() -> impl IntoView {
@@ -52,28 +20,111 @@ fn HomeRouterContent() -> impl IntoView {
                 <Route path=path!("/") view=Home/>
                 <Route path=path!("/register") view=Register/>
                 <Route path=path!("/login") view=Login/>
-                <Route path=path!("/rules") view=Home/>
-                <Route path=path!("/news") view=Home/>
-                <Route path=path!("/links") view=Home/>
+                <Route path=path!("/rules") view=Rules/>
+                <Route path=path!("/faq") view=Faq/>
+                <Route path=path!("/links") view=Links/>
+                <Route path=path!("/news") view=ReadNews/>
+                <Route path=path!("/reset-password") view=ResetPassword/>
             </Routes>
         </Router>
     }
 }
 
 #[component]
-fn Navigation() -> impl IntoView {
-    let player_state = use_context::<WriteSignal<player_state::Context>>().unwrap();
+pub fn HomeTemplate() -> impl IntoView {
+    view! {
+        <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico" />
+        <Body
+            attr:class="text-zinc-400 min-h-screen w-full
+                bg-[#d0cabd] bg-image-home bg-left-bottom bg-no-repeat bg-cover 2xl:bg-cover md:bg-contain sm:bg-contain portrait:bg-contain" />
 
-    let update = move |_| player_state.update(|ps| ps.auth = "daniel".to_string());
+            <div class="w-full h-full relative pt-12 pb-56">
+                <div>
+                    <Navigation />
+                </div>
+
+                <div class="alegreya-sc-medium-italic mt-12 mb-20 text-center text-black">
+                    <p class="text-6xl font-bold py-4">Welcome to Vallheru</p>
+                    <p class="text-2xl">A Realm of Heroes, Mysteries, and Endless Adventure!</p>
+                </div>
+
+                <div>
+                    <Content />
+                </div>
+            </div>
+    }
+}
+
+#[component]
+fn NavigationLink(
+    link: String,
+    activate_links: Vec<String>,
+    name: String,
+    cur_page: ReadSignal<String>,
+    set_cur_page: WriteSignal<String>,
+) -> impl IntoView {
+    let link_copy = link.clone();
 
     view! {
-        <div class="absolute z-10 h-12 pl-6 pt-3">
-            <ul class="alegreya-sc-medium-italic flex h-full w-1/2 items-center gap-x-5">
-                <li><a href="/" class="text-[#000011] bg-vallheru-creme-100 hover:bg-vallheru-creme-300 font-bold py-0.5 px-4 rounded-full items-center">Home</a></li>
-                <li><a href="/news" class="hover:text-vallheru-creme-300">News</a></li>
-                <li><a href="/rules" on:click=update class="hover:text-vallheru-creme-300">Rules</a></li>
-                <li><a href="/login" class="ml-12 hover:text-vallheru-creme-300">Login</a></li>
-                <li><a href="register" class="hover:text-vallheru-creme-300">Register</a></li>
+        <li class=move || {if &cur_page.get() == &link_copy {"font-bold"} else {""}}>
+            <a href={link.clone()} on:click=move |_| { set_cur_page.set(link.to_string()) }>{name}</a>
+        </li>
+    }
+}
+
+#[component]
+fn Navigation() -> impl IntoView {
+    let (cur_page, set_cur_page) = signal(location().pathname().unwrap_or("".into()));
+
+    view! {
+        <div class="w-full flex items-center">
+            <p class="alegreya-sc-medium-italic text-left text-black text-5xl mr-6 ml-14">
+                "Vallheru"
+            </p>
+
+
+            <ul class="w-full alegreya-sc-medium-italic flex justify-center gap-x-6 -ml-56 text-black text-3xl">
+                <NavigationLink
+                    link=String::from("/")
+                    activate_links=vec![String::from("/"), String::from("/news")]
+                    name=String::from("Home")
+                    cur_page=cur_page
+                    set_cur_page=set_cur_page />
+
+                <NavigationLink
+                    link=String::from("/faq")
+                    activate_links=vec![String::from("/faq")]
+                    name=String::from("FAQ")
+                    cur_page=cur_page
+                    set_cur_page=set_cur_page />
+
+                <NavigationLink
+                    link=String::from("/rules")
+                    activate_links=vec![String::from("/rules")]
+                    name=String::from("Rules")
+                    cur_page=cur_page
+                    set_cur_page=set_cur_page />
+
+                <NavigationLink
+                    link=String::from("/login")
+                    activate_links=vec![String::from("/login")]
+                    name=String::from("Login")
+                    cur_page=cur_page
+                    set_cur_page=set_cur_page />
+
+                    <NavigationLink
+                    link=String::from("/register")
+                    activate_links=vec![String::from("/register")]
+                    name=String::from("Register")
+                    cur_page=cur_page
+                    set_cur_page=set_cur_page />
+
+                <NavigationLink
+                    link=String::from("/links")
+                    activate_links=vec![String::from("/links")]
+                    name=String::from("Links")
+                    cur_page=cur_page
+                    set_cur_page=set_cur_page />
             </ul>
         </div>
     }
@@ -82,7 +133,7 @@ fn Navigation() -> impl IntoView {
 #[component]
 fn Content() -> impl IntoView {
     view! {
-        <div class="alegreya-sc-medium-italic">
+        <div class="w-full flex justify-center px-8">
             <HomeRouterContent />
         </div>
     }
@@ -91,18 +142,48 @@ fn Content() -> impl IntoView {
 #[component]
 fn Home() -> impl IntoView {
     view! {
-        <p class="text-6xl -ml-2 alegreya-sc-medium-italic">Vallheru</p>
-        <p class="text-xl mt-1 alegreya-sc-medium-italic">Land of Dragons</p>
-        <p class="text-base text-justify mt-12 alegreya-sc-medium-italic adju">
-            "Vallheru is a text-based RPG for multiple players, played in a turn-based system.
-            Here, you can fight monsters, duel other players, manage your own stronghold, 
-            earn money from your own mine, or create a clan together with other players. 
-            Don't expect breathtaking graphics - this game is more about using your imagination. 
-            To play, you don't need powerful hardware or any additional programs to download. 
-            If what I've written so far has caught your interest, register in the game and 
-            join us. However, before you do, make sure to read the code of conduct - the rules 
-            that govern the game."
-        </p>
+        <div class="lg:w-3/5 md:w-full text-black alegreya-sc-medium-italic">
+            <div class="text-4xl text-center mb-4">"The Realm's Whisper"</div>
+
+            <div class="mb-8">
+                <h2 class="text-xl pb-4">Exploring the Depths</h2>
+                <p class="text-justify">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula, augue
+                    eu interdum cursus, turpis ligula fermentum eros, a sagittis mauris est non enim.
+                    Ut et tortor at nisi gravida venenatis. Aliquam erat volutpat. Aenean hendrerit
+                    malesuada enim vel sagittis. Donec id ligula in nunc blandit cursus. Curabitur
+                    accumsan lectus ut sapien vestibulum, et tempus metus laoreet. Nam posuere, sapien
+                    a iaculis varius, lacus purus efficitur dolor, id tempus enim magna a ligula.
+                </p>
+                <p class="text-right mt-2"><a href="/news">Read more</a></p>
+            </div>
+
+            <div class="mb-8">
+                <h2 class="text-xl pb-4">The Rise of Heroes</h2>
+                <p class="text-justify">
+                    orbi ut eros dignissim, tincidunt sem id, volutpat sapien. Aenean condimentum,
+                    metus vitae consectetur pretium, purus nisl scelerisque nulla, nec viverra arcu
+                    nunc a velit. Sed faucibus, augue vel faucibus ultricies, est libero vehicula metus,
+                    in aliquam dolor nulla vel nunc. In dictum, neque non tempus gravida, nulla ipsum
+                    interdum ligula, ut eleifend erat justo nec risus.
+                </p>
+                <p class="text-right mt-2"><a href="/news">Read more</a></p>
+            </div>
+
+            <div class="mb-8">
+                <h2 class="text-xl pb-4">Unveiling the Secrets</h2>
+                <p class="text-justify">
+                    "Aliquam malesuada varius felis, at pretium mi dignissim quis. Nunc facilisis sapien
+                    eu augue fermentum, nec fringilla tortor vehicula. Integer ullamcorper, nunc quis
+                    gravida convallis, nisi erat fermentum urna, eu pellentesque purus felis non ex.
+                    Nam tincidunt, magna a ultrices pharetra, orci metus pellentesque justo, in mollis
+                    nulla justo nec nisi. Donec at venenatis augue. Vivamus ultricies odio eget tortor
+                    aliquam tristique. Nulla facilisi. Phasellus fermentum purus in neque fermentum,
+                    ut hendrerit dolor rhoncus."
+                </p>
+                <p class="text-right mt-2"><a href="/news">Read more</a></p>
+            </div>
+        </div>
     }
 }
 
@@ -111,100 +192,125 @@ fn Register() -> impl IntoView {
     let (name, set_name) = signal("".to_string());
 
     view! {
-        <p class="text-5xl">Registration</p>
-        <p class="text-sm mt-8 text-justify">
-        "Create your account to begin your adventure in Vallheru!
-        Enter your email, choose a unique fantasy nickname (or
-        use our generator for inspiration), and set a secure
-        password. Re-enter your password to confirm, then hit
-        Register to join the world of imagination and battles!"
-        </p>
+        <div class="lg:w-3/5 md:w-full text-black alegreya-sc-medium-italic">
+            <div class="text-4xl text-center mb-4">"Enter Vallheru"</div>
 
-        <form class="max-w-sm mx-auto mt-14">
-            <div class={"flex flex-row bg-vallheru-creme-100 mb-6 ".to_owned() + COMMON_FORM_CLASS}>
-                <label for="email" class="text-black pr-3">Email: </label>
-                <input
-                    type="email"
-                    id="email"
-                    class="text-black bg-transparent outline-none border-none placeholder:text-gray-600"
-                    placeholder="example@email.com"
-                    required />
-            </div>
+            <p class="text-lg">
+                "Welcome to the gateway of endless adventure and fantasy!
+                Create your account now to step into the immersive world of 
+                Vallheru, where heroes are forged, alliances are built, and 
+                legends are born. Simply provide your email address, select a 
+                unique fantasy nickname (or let our generator spark your imagination), 
+                and set a strong, secure password to protect your account. Confirm your 
+                password for added security, then click "Register" to embark on your quest."
+                <br /><br />
+                "After completing this step, an activation email will be sent to the address you
+                provided. Be sure to check your inbox (and spam folder, just in case) and follow 
+                the instructions to activate your account. Once activated, the realm of Vallheru 
+                will be yours to explore. Your adventure awaits!"
+            </p>
 
-            <div class={"flex flex-row bg-vallheru-creme-100 ".to_owned() + COMMON_FORM_CLASS}>
-                <label for="nickname" class="text-black pr-3">Nick: </label>
-                <input
-                    type="text"
-                    id="nickname"
-                    class="text-black bg-transparent outline-none border-none placeholder:text-gray-600"
-                    placeholder="Unique nick name"
-                    bind:value=(name, set_name)
-                    required />
-            </div>
+            <form class="max-w-sm mx-auto mt-14">
+                <div class={"flex flex-row mb-6 ".to_owned() + COMMON_FORM_CLASS}>
+                    <label for="email" class="text-black pr-3">Email: </label>
+                    <input
+                        type="email"
+                        id="email"
+                        class="text-black bg-transparent outline-none border-none placeholder:text-gray-600"
+                        placeholder="example@email.com"
+                        required />
+                </div>
 
-            <div class="flex flex-row text-sm mb-4">
-                <a href="#" on:click=move |_| {
-                    set_name.set(random_name());
-                }>Generate name</a>
-            </div>
+                <div class={"flex flex-row bg-vallheru-creme-100 ".to_owned() + COMMON_FORM_CLASS}>
+                    <label for="nickname" class="text-black pr-3">Nick: </label>
+                    <input
+                        type="text"
+                        id="nickname"
+                        class="text-black bg-transparent outline-none border-none placeholder:text-gray-600"
+                        placeholder="Unique nick name"
+                        bind:value=(name, set_name)
+                        required />
+                </div>
 
-            <div class={"flex flex-row mb-6 bg-gradient-to-r from-vallheru-creme-100 to-home-content-bg-800 text-black ".to_owned() + COMMON_FORM_CLASS}>
-                <label for="pass" class="text-black pr-3">Password: </label>
-                <input
-                    type="password"
-                    id="pass"
-                    class="text-black bg-transparent outline-none border-none"
-                    required />
-            </div>
+                <div class="flex flex-row text-sm mb-4">
+                    <a href="#" on:click=move |_| {
+                        set_name.set(random_name());
+                    }>Generate name</a>
+                </div>
 
-            <div class={"flex flex-row mb-12 bg-gradient-to-r from-home-content-bg-800 to-vallheru-creme-100 text-black ".to_owned() + COMMON_FORM_CLASS}>
-                <label for="re-pass" class="text-black pr-3">Re password: </label>
-                <input
-                    type="password"
-                    id="re-pass"
-                    class="w-28 text-black bg-transparent outline-none border-none"
-                    required />
-            </div>
+                <div class={"flex flex-row mb-6 text-black ".to_owned() + COMMON_FORM_CLASS}>
+                    <label for="pass" class="text-black pr-3">Password: </label>
+                    <input
+                        type="password"
+                        id="pass"
+                        class="text-black bg-transparent outline-none border-none"
+                        required />
+                </div>
 
+                <div class={"flex flex-row mb-6 text-black ".to_owned() + COMMON_FORM_CLASS}>
+                    <label for="re-pass" class="text-black pr-3">Re password: </label>
+                    <input
+                        type="password"
+                        id="re-pass"
+                        class="w-28 text-black bg-transparent outline-none border-none"
+                        required />
+                </div>
 
-            <div class="mb-3">
-                <button class={"bg-home-content-bg-800 text-vallheru-creme-300 hover:bg-vallheru-creme-100 hover:text-black ".to_owned() + COMMON_FORM_CLASS }>
-                    Register
-                </button>
-            </div>
-            <div>
-                <input type="checkbox" id="rules" class="border-none bg-vallheru-creme-100 text-black accent-vallheru-creme-300" />
-                <label for="rules" class="text-sm pl-2">I accept the rules</label>
-            </div>
-        </form>
+                <div class="mb-12">
+                    <input type="checkbox" id="rules" class="w-6 h-6 border-none bg-vallheru-creme-100 text-black accent-vallheru-creme-300" />
+                    <label for="rules" class="text-2xl pl-2">I accept the rules</label>
+                </div>
+
+                <div class="mb-3">
+                    <button class={"".to_owned() + COMMON_BUTTON_CLASS }>
+                        Register
+                    </button>
+                </div>
+
+            </form>
+        </div>
     }
 }
 
 #[component]
 fn Login() -> impl IntoView {
     view! {
-        <p class="text-5xl">Login</p>
-        <p class="text-sm mt-8">Step into a world of imagination and adventure. Log in to continue your journey!</p>
+        <div class="lg:w-3/5 md:w-full text-black alegreya-sc-medium-italic">
+            <div class="text-4xl text-center mb-4">"Enter Vallheru"</div>
 
-        <form class="max-w-sm mx-auto mt-14">
-            <div class="mb-8">
-                <input type="email" id="email" class={"bg-vallheru-creme-100 text-gray-900 ".to_owned() + COMMON_FORM_CLASS} placeholder="example@email.com" required />
-            </div>
+            <p class="text-lg text-center mt-8">Step into a world of imagination and adventure. Log in to continue your journey!</p>
 
-            <div class="mb-12">
-                <input type="password" id="password" class={"bg-gradient-to-r from-vallheru-creme-100 to-home-content-bg-800 ".to_owned() + COMMON_FORM_CLASS } placeholder="password" required />
-            </div>
+            <form class="max-w-sm mx-auto mt-14">
+                <div class={"mb-8 ".to_owned() + COMMON_FORM_CLASS}>
+                    <label for="login-email" class="text-black pr-3">Email: </label>
+                    <input
+                        type="email"
+                        id="login-email"
+                        class="text-black bg-transparent outline-none border-none"
+                        placeholder="example@email.com"
+                        required />
+                </div>
 
-            <div class="mb-3">
-                <button class={"bg-home-content-bg-800 text-vallheru-creme-300 hover:bg-home-content-bg-100".to_owned() + COMMON_FORM_CLASS }>
-                    Log in
-                </button>
-            </div>
+                <div class={"mb-12 ".to_owned() + COMMON_FORM_CLASS}>
+                    <label for="login-password" class="text-black pr-3">Password: </label>
+                    <input
+                        type="password"
+                        id="login-password"
+                        class="text-black bg-transparent outline-none border-none"
+                        placeholder="password" required />
+                </div>
 
-            <p class="alegreya-sc-medium-italic text-sm">
-                <a href="/reset-password">Reset password</a>
-            </p>
-        </form>
+                <div class="mb-3">
+                    <button class={"".to_owned() + COMMON_BUTTON_CLASS }>
+                        Log in
+                    </button>
+                </div>
+
+                <p class="alegreya-sc-medium-italic">
+                    <a href="/reset-password">Reset password</a>
+                </p>
+            </form>
+        </div>
     }
 }
 
@@ -212,16 +318,16 @@ fn Login() -> impl IntoView {
 fn Rules() -> impl IntoView {
     view! {
         <p class="text-xl">
-            Zasady
+            Rules
         </p>
     }
 }
 
 #[component]
-fn News() -> impl IntoView {
+fn Faq() -> impl IntoView {
     view! {
         <p class="text-xl">
-            Wydarzenia
+            FAQ
         </p>
     }
 }
@@ -230,7 +336,53 @@ fn News() -> impl IntoView {
 fn Links() -> impl IntoView {
     view! {
         <p class="text-xl">
-            Linki
+            Links
         </p>
+    }
+}
+
+#[component]
+fn ReadNews() -> impl IntoView {
+    view! {
+        <div class="lg:w-3/5 md:w-full text-black alegreya-sc-medium-italic">
+            <div class="text-4xl text-center mb-4">"The Realm's Whisper"</div>
+
+            <div class="mb-8">
+                <h2 class="text-xl pb-4">Exploring the Depths</h2>
+                <p class="text-justify">
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque a vehicula nulla.
+                Fusce vitae urna in magna posuere pretium. Sed dapibus, augue sed tristique vulputate, 
+                magna lorem elementum lorem, sit amet tristique purus nisi ac lacus. Nullam hendrerit 
+                lacus sed mauris efficitur, nec dictum urna consequat. Suspendisse potenti. Nunc 
+                aliquet sapien vel ante hendrerit, ac tempor urna placerat. Integer porta libero nec 
+                eros ultricies tincidunt."
+                <br /><br />
+                "Vivamus rutrum lorem eu mi bibendum condimentum. Sed auctor urna ac urna dictum fringilla.
+                Duis blandit, magna ac sollicitudin ultricies, enim metus viverra neque, id accumsan eros risus 
+                ut orci. Cras rhoncus urna vel volutpat vehicula. Etiam sed massa sit amet lorem euismod eleifend. 
+                Mauris semper felis ut lorem feugiat, at posuere neque dapibus. Integer accumsan magna ut eros 
+                tristique vehicula."
+                <br /><br />
+                "Sed nec est quis lacus gravida tincidunt. Etiam vitae orci at libero efficitur hendrerit
+                sed sed nisl. Nullam fermentum sapien justo, ac malesuada augue faucibus eget. Integer eu 
+                est eros. Ut congue dui eu vehicula feugiat. Morbi tincidunt nunc et quam cursus, nec congue 
+                tortor suscipit. Fusce id lorem ac lorem finibus vestibulum. Suspendisse potenti."
+                <br /><br />
+                "Aliquam malesuada varius felis, at pretium mi dignissim quis. Nunc facilisis sapien eu
+                augue fermentum, nec fringilla tortor vehicula. Integer ullamcorper, nunc quis gravida convallis, 
+                nisi erat fermentum urna, eu pellentesque purus felis non ex. Nam tincidunt, magna a ultrices 
+                pharetra, orci metus pellentesque justo, in mollis nulla justo nec nisi. Donec at venenatis augue. 
+                Vivamus ultricies odio eget tortor aliquam tristique. Nulla facilisi. Phasellus fermentum purus in 
+                neque fermentum, ut hendrerit dolor rhoncus."
+                </p>
+            </div>
+        </div>
+    }
+}
+
+#[component]
+fn ResetPassword() -> impl IntoView {
+    view! {
+        <div>ResetPassword</div>
     }
 }

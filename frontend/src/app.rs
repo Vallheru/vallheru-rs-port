@@ -2,8 +2,7 @@ pub mod components;
 pub mod player_state;
 
 use components::HomeTemplate;
-use leptos::{ev::storage, prelude::*};
-use player_state::ContextStoreFields;
+use leptos::prelude::*;
 use reactive_stores::Store;
 
 #[component]
