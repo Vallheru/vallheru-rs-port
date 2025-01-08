@@ -8,7 +8,10 @@ pub mod middleware;
 use anyhow::Context;
 use std::sync::Arc;
 
+use tower_http::cors::{Any, CorsLayer};
+
 use axum::{
+    http::Method,
     routing::{get, post},
     Router,
 };
@@ -34,10 +37,19 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
         config: Arc::new(config),
         db,
     });
+
+    let cors = CorsLayer::new()
+        // allow `GET` and `POST` when accessing the resource
+        .allow_methods(Any)
+        // allow requests from any origin
+        .allow_origin(Any)
+        .allow_headers(Any);
+
     let app = Router::new()
         .nest("/api", api_router(shared_state.clone()))
         .with_state(shared_state)
-        .fallback(handler::not_found_fallback);
+        .fallback(handler::not_found_fallback)
+        .layer(cors);
 
     axum::serve(listener, app)
         .await
