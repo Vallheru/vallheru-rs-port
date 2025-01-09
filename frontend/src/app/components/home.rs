@@ -4,7 +4,7 @@ use leptos_router::{
     components::{Route, Router, Routes},
     path,
 };
-use vallheru::name_generator::random_name;
+use vallheru::{api::LoginResponse, name_generator::random_name};
 use web_sys::SubmitEvent;
 
 use crate::player_state;
@@ -294,7 +294,18 @@ fn Login() -> impl IntoView {
         spawn_local(async move {
             println!("Sending");
             set_disabled_button.set(true);
-            let req = crate::app::api::login(&email, &pass).await.unwrap();
+            // let req = crate::app::api::login(&email, &pass).await.unwrap();
+
+            let req: LoginResponse = vallheru::api::api_request(
+                None,
+                "http://nebula-dev.local.mainnet.community:3004",
+                &vallheru::api::LoginRequest {
+                    email,
+                    password: pass,
+                },
+            )
+            .await
+            .unwrap();
 
             set_disabled_button.set(false);
             leptos::logging::log!("{:?}", req);
