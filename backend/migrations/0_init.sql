@@ -1,4 +1,5 @@
-DROP TABLE player;
+DROP TABLE player CASCADE;
+DROP TABLE token CASCADE;
 
 CREATE TABLE player (
     id SERIAL PRIMARY KEY,
@@ -6,6 +7,7 @@ CREATE TABLE player (
     password VARCHAR(72) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    login_count INT NOT NULL DEFAULT 1, -- we update this value after player data is retrieved during logging in
     last_login TIMESTAMPTZ
 );
 

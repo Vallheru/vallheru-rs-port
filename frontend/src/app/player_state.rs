@@ -6,9 +6,20 @@ use serde::{Deserialize, Serialize};
 pub struct Context {
     pub auth: String,
     pub id: i32,
+    pub in_game: bool,
 }
 
 pub const STORAGE_KEY: &str = "vallheru-player-context";
+
+impl Context {
+    pub fn new() -> Self {
+        Self {
+            auth: "".to_string(),
+            id: 0,
+            in_game: false,
+        }
+    }
+}
 
 impl Default for Context {
     fn default() -> Self {
@@ -23,9 +34,6 @@ impl Default for Context {
                     .flatten()
                     .and_then(|val| serde_json::from_str::<Context>(&val).ok())
             })
-            .unwrap_or(Self {
-                auth: "".to_string(),
-                id: 0,
-            })
+            .unwrap_or(Self::new())
     }
 }

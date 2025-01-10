@@ -10,7 +10,7 @@ use vallheru::{
 };
 use web_sys::SubmitEvent;
 
-use crate::{api::ApiRequestBuilder, player_state};
+use crate::{api::ApiRequestBuilder, player_state::Context};
 
 const COMMON_FORM_CLASS: &str = "px-4 py-2 rounded-md border-2 border-[#1e1a20] bg-gradient-to-r from-vallheru-creme-100 to-vallheru-creme-400";
 const COMMON_BUTTON_CLASS: &str =
@@ -29,7 +29,6 @@ fn HomeRouterContent() -> impl IntoView {
                 <Route path=path!("/links") view=Links/>
                 <Route path=path!("/news") view=ReadNews/>
                 <Route path=path!("/reset-password") view=ResetPassword/>
-                <Route path=path!("/welcome") view=Welcome/>
             </Routes>
         </Router>
     }
@@ -37,24 +36,36 @@ fn HomeRouterContent() -> impl IntoView {
 
 #[component]
 pub fn HomeTemplate() -> impl IntoView {
+    let app_context = use_context::<ReadSignal<crate::AppContext>>()
+        .expect("expected app_context to be added to leptos context");
+
     view! {
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico" />
         <Body
             attr:class="text-zinc-400 min-h-screen w-full
                 bg-[#d0cabd] bg-image-home bg-left-bottom bg-no-repeat bg-cover 2xl:bg-cover md:bg-contain sm:bg-contain portrait:bg-contain" />
+            <div class="w-full h-full">
 
-            <div class="w-full h-full relative pt-12 pb-56">
-                <div>
-                    <Navigation />
+                <div
+                    class="absolute w-full h-full bg-opacity-50 z-10 text-8xl text-black flex justify-center items-center"
+                    class:hidden=move || !app_context.read().global_loading>
+                    <div class="w-40 h-40 bg-[url('/images/preloader.svg')]"></div>
                 </div>
+                <div
+                    class="w-full h-full relative pt-12 pb-56"
+                    class:blur-sm=move || app_context.read().global_loading>
+                    <div>
+                        <Navigation />
+                    </div>
 
-                <div class="alegreya-sc-medium-italic mt-12 mb-20 text-center text-black">
-                    <p class="text-6xl font-bold py-4">Welcome to Vallheru</p>
-                    <p class="text-2xl">A Realm of Heroes, Mysteries, and Endless Adventure!</p>
-                </div>
+                    <div class="alegreya-sc-medium-italic mt-12 mb-20 text-center text-black">
+                        <p class="text-6xl font-bold py-4">Welcome to Vallheru</p>
+                        <p class="text-2xl">A Realm of Heroes, Mysteries, and Endless Adventure!</p>
+                    </div>
 
-                <div>
-                    <Content />
+                    <div>
+                        <Content />
+                    </div>
                 </div>
             </div>
     }
@@ -153,12 +164,12 @@ fn Home() -> impl IntoView {
             <div class="mb-8">
                 <h2 class="text-xl pb-4">Exploring the Depths</h2>
                 <p class="text-justify">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula, augue
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula, augue
                     eu interdum cursus, turpis ligula fermentum eros, a sagittis mauris est non enim.
                     Ut et tortor at nisi gravida venenatis. Aliquam erat volutpat. Aenean hendrerit
                     malesuada enim vel sagittis. Donec id ligula in nunc blandit cursus. Curabitur
                     accumsan lectus ut sapien vestibulum, et tempus metus laoreet. Nam posuere, sapien
-                    a iaculis varius, lacus purus efficitur dolor, id tempus enim magna a ligula.
+                    a iaculis varius, lacus purus efficitur dolor, id tempus enim magna a ligula."
                 </p>
                 <p class="text-right mt-2"><a href="/news">Read more</a></p>
             </div>
@@ -166,11 +177,11 @@ fn Home() -> impl IntoView {
             <div class="mb-8">
                 <h2 class="text-xl pb-4">The Rise of Heroes</h2>
                 <p class="text-justify">
-                    orbi ut eros dignissim, tincidunt sem id, volutpat sapien. Aenean condimentum,
+                    "orbi ut eros dignissim, tincidunt sem id, volutpat sapien. Aenean condimentum,
                     metus vitae consectetur pretium, purus nisl scelerisque nulla, nec viverra arcu
                     nunc a velit. Sed faucibus, augue vel faucibus ultricies, est libero vehicula metus,
                     in aliquam dolor nulla vel nunc. In dictum, neque non tempus gravida, nulla ipsum
-                    interdum ligula, ut eleifend erat justo nec risus.
+                    interdum ligula, ut eleifend erat justo nec risus."
                 </p>
                 <p class="text-right mt-2"><a href="/news">Read more</a></p>
             </div>
@@ -281,7 +292,17 @@ fn Register() -> impl IntoView {
 fn Login() -> impl IntoView {
     let email_element: NodeRef<html::Input> = NodeRef::new();
     let password_element: NodeRef<html::Input> = NodeRef::new();
+
     let (disabled_button, set_disabled_button) = signal(false);
+    let (login_error_msg, set_login_error_msg) = signal(String::new());
+    let (logged_in_show, set_logged_in_show) = signal(false);
+    let (login_count, set_login_count) = signal(0);
+
+    let set_player_state = use_context::<WriteSignal<Context>>()
+        .expect("expected player_state::Context to be initialized");
+
+    let set_app_context = use_context::<WriteSignal<crate::AppContext>>()
+        .expect("expected app_context to be added to leptos context");
 
     let login_submit = move |ev: SubmitEvent| {
         ev.prevent_default();
@@ -291,38 +312,38 @@ fn Login() -> impl IntoView {
             .value();
         let password = password_element
             .get()
-            .expect("<input email> should be mounted")
+            .expect("<input password> should be mounted")
             .value();
-        // call_api(
-        //     set_disabled_button,
-        //     ,
-        //     |res: LoginResponse| {},
-        //     |err_res| {},
-        //     |err| {},
-        // )
-
-        fn show_error_modal(str: String) {
-            leptos::logging::log!("{}", str);
-        }
-
-        fn login_user(str: LoginResponse) {
-            leptos::logging::log!("{:?}", str);
-        }
 
         spawn_local(async move {
             ApiRequestBuilder::new(LoginRequest { email, password })
                 .on_begin(|| {
                     set_disabled_button.set(true);
+                    set_app_context.update(|ctx| ctx.global_loading = true);
                 })
                 .on_finish(|| {
                     set_disabled_button.set(false);
+                    set_app_context.update(|ctx| ctx.global_loading = false);
                 })
-                .on_unexpected_error(|err| leptos::logging::error!("Unexpected error: {}", err))
+                .on_unexpected_error(|err| {
+                    set_login_error_msg.set(String::from("Unexpected error happend during login"));
+                    set_logged_in_show.set(false);
+                    leptos::logging::error!("Unexpected error: {}", err);
+                })
                 .on_handled_error(|err| {
-                    show_error_modal(err.details);
+                    set_login_error_msg.set(err.details);
+                    set_logged_in_show.set(false);
                 })
                 .send(|res: LoginResponse| {
-                    login_user(res);
+                    set_login_error_msg.set(String::new());
+
+                    set_login_count.set(res.login_count);
+                    set_player_state.update(|context| {
+                        context.auth = res.token;
+                        context.id = res.id;
+                    });
+
+                    set_logged_in_show.set(true);
                 })
                 .await;
         });
@@ -330,47 +351,64 @@ fn Login() -> impl IntoView {
 
     view! {
         <div class="lg:w-3/5 md:w-full text-black alegreya-sc-medium-italic">
-            <div class="text-4xl text-center mb-4">"Enter Vallheru"</div>
+            <div
+                class="mt-14 text-3xl text-center text-black-500"
+                class:hidden=move || !logged_in_show.get() >
+                <a href="/game" on:click=move |_| set_player_state.update(|ctx| ctx.in_game = true)>
+                    "Welcome to the realm of Vallheru for the " {move || crate::utils::to_ordinal(login_count.get() as u32)} " time"<br />"Click here to enter the game!"
+                </a>
+            </div>
 
-            <p class="text-lg text-center mt-8">Step into a world of imagination and adventure. Log in to continue your journey!</p>
+            <div class:hidden=move || logged_in_show.get()>
+                <div class="text-4xl text-center mb-4">"Enter Vallheru"</div>
 
-            <form
-                on:submit=login_submit
-                class="max-w-sm mx-auto mt-14">
-                <div class={"mb-8 ".to_owned() + COMMON_FORM_CLASS}>
-                    <label for="login-email" class="text-black pr-3">Email: </label>
-                    <input
-                        type="email"
-                        id="login-email"
-                        class="text-black bg-transparent outline-none border-none"
-                        placeholder="example@email.com"
-                        node_ref=email_element
-                        required />
+                <p class="text-lg text-center mt-8">"Step into a world of imagination and adventure. Log in to continue your journey!"</p>
+
+                <div
+                    class="mt-8 text-lg text-center text-red-500"
+                    class:hidden=move || login_error_msg.get().is_empty() >
+                    "Invalid passowrd or username"
                 </div>
 
-                <div class={"mb-12 ".to_owned() + COMMON_FORM_CLASS}>
-                    <label for="login-password" class="text-black pr-3">Password: </label>
-                    <input
-                        type="password"
-                        id="login-password"
-                        class="text-black bg-transparent outline-none border-none"
-                        placeholder="password"
-                        node_ref=password_element
-                        required />
-                </div>
 
-                <div class="mb-3">
-                    <button
-                        class={"".to_owned() + COMMON_BUTTON_CLASS }
-                        disabled=move || disabled_button.get()>
-                        Log in
-                    </button>
-                </div>
+                <form
+                    on:submit=login_submit
+                    class="max-w-sm mx-auto mt-10">
+                    <div class={"mb-8 ".to_owned() + COMMON_FORM_CLASS}>
+                        <label for="login-email" class="text-black pr-3">Email: </label>
+                        <input
+                            type="email"
+                            id="login-email"
+                            class="text-black bg-transparent outline-none border-none"
+                            placeholder="example@email.com"
+                            node_ref=email_element
+                            required />
+                    </div>
 
-                <p class="alegreya-sc-medium-italic">
-                    <a href="/reset-password">Reset password</a>
-                </p>
-            </form>
+                    <div class={"mb-12 ".to_owned() + COMMON_FORM_CLASS}>
+                        <label for="login-password" class="text-black pr-3">Password: </label>
+                        <input
+                            type="password"
+                            id="login-password"
+                            class="text-black bg-transparent outline-none border-none"
+                            placeholder="password"
+                            node_ref=password_element
+                            required />
+                    </div>
+
+                    <div class="mb-3">
+                        <button
+                            class={"".to_owned() + COMMON_BUTTON_CLASS }
+                            disabled=move || disabled_button.get()>
+                            Log in
+                        </button>
+                    </div>
+
+                    <p class="alegreya-sc-medium-italic">
+                        <a href="/reset-password">Reset password</a>
+                    </p>
+                </form>
+            </div>
         </div>
     }
 }
@@ -445,12 +483,5 @@ fn ReadNews() -> impl IntoView {
 fn ResetPassword() -> impl IntoView {
     view! {
         <div>ResetPassword</div>
-    }
-}
-
-#[component]
-fn Welcome() -> impl IntoView {
-    view! {
-        <div>Welcome</div>
     }
 }

@@ -1,17 +1,26 @@
 pub mod api;
 pub mod components;
 pub mod player_state;
+pub mod utils;
 
 use components::HomeTemplate;
 use leptos::prelude::*;
 use reactive_stores::Store;
 
+#[derive(Default)]
+pub struct AppContext {
+    global_loading: bool,
+}
+
 #[component]
 pub fn App() -> impl IntoView {
     provide_context(Store::new(player_state::Context::default()));
     let (player_context, set_player_context) = signal(player_state::Context::default());
-
+    let (app_context, set_app_context) = signal(AppContext::default());
+    provide_context(player_context);
     provide_context(set_player_context);
+    provide_context(app_context);
+    provide_context(set_app_context);
 
     Effect::new(move |_| {
         if let Ok(Some(stor)) = window().local_storage() {
@@ -24,11 +33,11 @@ pub fn App() -> impl IntoView {
         }
     });
 
-    let log_out = move |_| set_player_context.update(|ps| ps.auth = "".to_string());
+    let log_out = move |_| set_player_context.set(player_state::Context::new());
 
     view! {
         <Show
-            when=move || { !player_context.get().auth.is_empty() }
+            when=move || { player_context.get().in_game }
             fallback=|| view! { <HomeTemplate /> }
         >
             <div>Logged in, <a on:click=log_out>Log out</a></div>

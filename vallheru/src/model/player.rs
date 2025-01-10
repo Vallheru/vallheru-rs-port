@@ -11,6 +11,7 @@ pub struct Player {
     pub created_at: crate::DateTime,
     // #[serde(with = "crate::date::option_date_serializer")] // declaring
     pub last_login: Option<crate::DateTime>,
+    pub login_count: i32,
 }
 
 // #[cfg(test)]

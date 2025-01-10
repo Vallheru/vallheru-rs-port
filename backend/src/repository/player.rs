@@ -2,15 +2,18 @@ use crate::web::Error;
 
 use vallheru::model::Player;
 
-pub async fn alter_last_login(db: &sqlx::PgPool, player_id: i32) -> sqlx::Result<()> {
-    sqlx::query(r"UPDATE player SET last_login=NOW() WHERE id=$1")
+pub async fn alter_last_login_and_login_count(
+    db: &sqlx::PgPool,
+    player_id: i32,
+) -> sqlx::Result<()> {
+    sqlx::query(r"UPDATE player SET last_login=NOW(), login_count=login_count+1 WHERE id=$1")
         .bind(player_id)
         .execute(db)
         .await
         .map(|_| ())
 }
 
-pub async fn get_user_by_email_and_password(
+pub async fn get_player_by_email(
     db: &sqlx::PgPool,
     email: &str,
     pass: &str,

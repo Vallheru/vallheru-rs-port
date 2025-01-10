@@ -13,6 +13,7 @@ pub struct LoginResponse {
     pub token: String,
     pub id: i32,
     pub username: String,
+    pub login_count: i32,
 }
 
 impl ApiRequest for LoginRequest {
