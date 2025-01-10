@@ -16,8 +16,8 @@ pub struct LoginResponse {
 }
 
 impl ApiRequest for LoginRequest {
-    fn endpoint(&self) -> &'static str {
-        "/api/login"
+    fn endpoint(&self) -> String {
+        String::from("/api/login")
     }
     fn method(&self) -> ApiMethod {
         ApiMethod::Post

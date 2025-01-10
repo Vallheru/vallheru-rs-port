@@ -1,6 +1,6 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct ErrorResponse {
     #[serde(rename = "type")]
     pub ty: String,

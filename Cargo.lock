@@ -3643,13 +3643,17 @@ dependencies = [
 name = "vallheru"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "bcrypt",
  "chrono",
  "getrandom",
  "rand",
+ "reqwest",
  "serde",
  "serde_json",
  "sqlx",
+ "thiserror 2.0.9",
+ "url",
  "uuid",
 ]
 

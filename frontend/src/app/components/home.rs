@@ -1,13 +1,16 @@
-use leptos::{html, logging::log, prelude::*, task::spawn_local};
+use leptos::{html, prelude::*, task::spawn_local};
 use leptos_meta::*;
 use leptos_router::{
     components::{Route, Router, Routes},
     path,
 };
-use vallheru::{api::LoginResponse, name_generator::random_name};
+use vallheru::{
+    api::{LoginRequest, LoginResponse},
+    name_generator::random_name,
+};
 use web_sys::SubmitEvent;
 
-use crate::player_state;
+use crate::{api::ApiRequestBuilder, player_state};
 
 const COMMON_FORM_CLASS: &str = "px-4 py-2 rounded-md border-2 border-[#1e1a20] bg-gradient-to-r from-vallheru-creme-100 to-vallheru-creme-400";
 const COMMON_BUTTON_CLASS: &str =
@@ -286,29 +289,42 @@ fn Login() -> impl IntoView {
             .get()
             .expect("<input email> should be mounted")
             .value();
-        let pass = password_element
+        let password = password_element
             .get()
             .expect("<input email> should be mounted")
             .value();
+        // call_api(
+        //     set_disabled_button,
+        //     ,
+        //     |res: LoginResponse| {},
+        //     |err_res| {},
+        //     |err| {},
+        // )
+
+        fn show_error_modal(str: String) {
+            leptos::logging::log!("{}", str);
+        }
+
+        fn login_user(str: LoginResponse) {
+            leptos::logging::log!("{:?}", str);
+        }
 
         spawn_local(async move {
-            println!("Sending");
-            set_disabled_button.set(true);
-            // let req = crate::app::api::login(&email, &pass).await.unwrap();
-
-            let req: LoginResponse = vallheru::api::api_request(
-                None,
-                "http://nebula-dev.local.mainnet.community:3004",
-                &vallheru::api::LoginRequest {
-                    email,
-                    password: pass,
-                },
-            )
-            .await
-            .unwrap();
-
-            set_disabled_button.set(false);
-            leptos::logging::log!("{:?}", req);
+            ApiRequestBuilder::new(LoginRequest { email, password })
+                .on_begin(|| {
+                    set_disabled_button.set(true);
+                })
+                .on_finish(|| {
+                    set_disabled_button.set(false);
+                })
+                .on_unexpected_error(|err| leptos::logging::error!("Unexpected error: {}", err))
+                .on_handled_error(|err| {
+                    show_error_modal(err.details);
+                })
+                .send(|res: LoginResponse| {
+                    login_user(res);
+                })
+                .await;
         });
     };
 
