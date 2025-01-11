@@ -1,5 +1,8 @@
+use crate::web::Result;
+use vallheru::model::Token;
+
 pub async fn get_active_token_for_player(db: &sqlx::PgPool, player_id: i32) -> Option<String> {
-    let token = sqlx::query_as::<_, vallheru::model::Token>(
+    let token = sqlx::query_as::<_, Token>(
         r"SELECT * FROM token WHERE player_id=$1 AND valid_until>NOW()+'5 minutes'::INTERVAL",
     )
     .bind(player_id)
@@ -13,7 +16,7 @@ pub async fn get_active_token_for_player(db: &sqlx::PgPool, player_id: i32) -> O
 }
 
 pub async fn create_token_for_player(db: &sqlx::PgPool, player_id: i32) -> Option<String> {
-    let token = vallheru::model::Token::new(player_id);
+    let token = Token::new(player_id);
 
     sqlx::query(
         r"INSERT INTO token(player_id, token, created_at, valid_until) VALUES($1, $2, $3, $4)",
@@ -28,11 +31,7 @@ pub async fn create_token_for_player(db: &sqlx::PgPool, player_id: i32) -> Optio
     .unwrap_or(None)
 }
 
-pub async fn extend_token_for_player(
-    db: &sqlx::PgPool,
-    player_id: i32,
-    token: &str,
-) -> crate::web::Result<()> {
+pub async fn extend_token_for_player(db: &sqlx::PgPool, player_id: i32, token: &str) -> Result<()> {
     sqlx::query(
         r"UPDATE token SET valid_until=NOW()+'12 hours'::INTERVAL WHERE player_id=$1 AND token=$2",
     )
