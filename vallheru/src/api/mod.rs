@@ -1,9 +1,14 @@
+pub mod login;
+pub use login::LoginRequest;
+pub use login::LoginResponse;
+
 pub mod player;
-pub use player::LoginRequest;
-pub use player::LoginResponse;
+pub use player::PlayerRequest;
+pub use player::PlayerResponse;
 
 pub mod error;
 pub use error::ErrorResponse;
+pub use error::ErrorResponseKind;
 use reqwest::Url;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
@@ -12,11 +17,18 @@ pub enum ApiMethod {
     Get,
     Post,
 }
+
 pub trait ApiRequest {
     fn endpoint(&self) -> String;
     fn method(&self) -> ApiMethod;
 }
 
+pub trait Stringify<'a> {
+    fn from_str(path_str: &str) -> Self;
+    fn to_str(&self) -> &'a str;
+}
+
+// this error should not be returned from the API endpoint. This error is returned when the api is called
 #[derive(thiserror::Error, Debug)]
 pub enum ApiError {
     #[error("an api http call failed")]
@@ -27,6 +39,9 @@ pub enum ApiError {
 
     #[error("invalid response received from the API request")]
     InvalidResponse(#[from] serde_json::Error),
+
+    #[error("invalid request parameter received for extractor")]
+    InvalidExtractorParameter(String),
 
     #[error("handled error received from api")]
     Api(ErrorResponse),
@@ -48,6 +63,7 @@ pub async fn api_request<Q, R>(
     client: Option<&reqwest::Client>,
     base_url: &str,
     req: &Q,
+    token: Option<&str>,
 ) -> Result<R>
 where
     Q: ApiRequest + Serialize,
@@ -60,12 +76,16 @@ where
 
     let endpoint = Url::parse(base_url)?.join(&req.endpoint())?;
 
-    let response = match req.method() {
+    let mut request = match req.method() {
         ApiMethod::Get => client.get(endpoint),
         ApiMethod::Post => client.post(endpoint).json(req),
+    };
+
+    if let Some(token) = token {
+        request = request.header("Authorization", format!("Token {}", token));
     }
-    .send()
-    .await?;
+
+    let response = request.send().await?;
 
     let text = response.text().await?;
 

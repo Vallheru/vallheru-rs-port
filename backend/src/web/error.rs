@@ -1,6 +1,7 @@
 use crate::web::middleware::AuthError;
 use axum::{http::StatusCode, response::IntoResponse};
 use serde_json::json;
+use vallheru::api::{self, ErrorResponseKind};
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
@@ -24,11 +25,15 @@ pub enum Error {
 
     #[error("an internal server error occurred")]
     InternalServer(String),
+
+    #[error("a handled error from the api")]
+    Api((StatusCode, String)),
 }
 
 impl Error {
     pub fn status_code(&self) -> StatusCode {
         match self {
+            Self::Api((code, _)) => code.clone(),
             Self::Forbidden => StatusCode::FORBIDDEN,
             Self::Auth(_) => StatusCode::UNAUTHORIZED,
             Self::NotFound => StatusCode::NOT_FOUND,
@@ -38,50 +43,40 @@ impl Error {
             }
         }
     }
-
-    pub fn ty(&self) -> String {
-        String::from(match self {
-            Self::Forbidden => "forbidden",
-            Self::Auth(_) => "auth error",
-            Self::NotFound => "not found",
-            Self::Unauthorized(_) => "unauthorized",
-            Self::InternalServer(_) | Self::AnyHow(_) | Self::Sqlx(_) => "internal server error",
-        })
-    }
 }
 
 impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
         let error = match self {
-            Self::Forbidden => vallheru::api::ErrorResponse {
-                ty: self.ty(),
+            Self::Forbidden => api::ErrorResponse {
+                ty: ErrorResponseKind::RequestForbidden,
                 details: self.to_string(),
             },
-            Self::Unauthorized(ref details) => vallheru::api::ErrorResponse {
-                ty: self.ty(),
+            Self::Unauthorized(ref details) => api::ErrorResponse {
+                ty: ErrorResponseKind::Unauthorized,
                 details: details.clone().unwrap_or(self.to_string()),
             },
-            Self::Auth(ref e) => vallheru::api::ErrorResponse {
-                ty: self.ty(),
+            Self::Auth(ref e) => api::ErrorResponse {
+                ty: ErrorResponseKind::AuthError,
                 details: e.to_string(),
             },
-            Self::NotFound => vallheru::api::ErrorResponse {
-                ty: self.ty(),
+            Self::NotFound => api::ErrorResponse {
+                ty: ErrorResponseKind::NotFound,
                 details: self.to_string(),
             },
             Self::Sqlx(ref e) => {
                 println!("SQLx error: {:?}", e);
 
-                vallheru::api::ErrorResponse {
-                    ty: self.ty(),
+                api::ErrorResponse {
+                    ty: ErrorResponseKind::InternalServerError,
                     details: self.to_string(),
                 }
             }
             Self::AnyHow(ref e) => {
                 println!("Generic error: {:?}", e);
 
-                vallheru::api::ErrorResponse {
-                    ty: self.ty(),
+                api::ErrorResponse {
+                    ty: ErrorResponseKind::InternalServerError,
                     details: self.to_string(),
                 }
             }
@@ -94,11 +89,15 @@ impl IntoResponse for Error {
 
                 println!("Internal error: {:?}", details);
 
-                vallheru::api::ErrorResponse {
-                    ty: self.ty(),
+                api::ErrorResponse {
+                    ty: ErrorResponseKind::InternalServerError,
                     details,
                 }
             }
+            Self::Api((_, ref details)) => api::ErrorResponse {
+                ty: ErrorResponseKind::APIError,
+                details: details.clone(),
+            },
         };
 
         (self.status_code(), json!(error).to_string()).into_response()

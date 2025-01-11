@@ -1,20 +1,18 @@
 pub mod error;
+use axum::Router;
 pub use error::Error;
-
 pub mod handler;
-
 pub mod middleware;
+
+mod router;
+use handler::{method_not_allowed_fallback, not_found_fallback};
+use router::api_router;
 
 use anyhow::Context;
 use std::sync::Arc;
 
 use tower_http::cors::{Any, CorsLayer};
 
-use axum::{
-    http::Method,
-    routing::{get, post},
-    Router,
-};
 use sqlx::PgPool;
 
 use crate::config::Config;
@@ -26,7 +24,7 @@ pub struct ApiContext {
     pub db: PgPool,
 }
 
-type AppState = Arc<ApiContext>;
+pub type AppState = Arc<ApiContext>;
 
 pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
     let listener = tokio::net::TcpListener::bind(&config.bind)
@@ -48,26 +46,11 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
     let app = Router::new()
         .nest("/api", api_router(shared_state.clone()))
         .with_state(shared_state)
-        .fallback(handler::not_found_fallback)
+        .method_not_allowed_fallback(method_not_allowed_fallback)
+        .fallback(not_found_fallback)
         .layer(cors);
 
     axum::serve(listener, app)
         .await
         .context("failed to serve axum app")
-}
-
-fn api_router(app_state: AppState) -> Router<AppState> {
-    Router::new()
-        .route("/login", post(crate::web::handler::home::post_login))
-        .route(
-            "/game",
-            get(protected).layer(axum::middleware::from_fn_with_state(
-                app_state,
-                middleware::authorization_middleware,
-            )),
-        )
-}
-
-async fn protected() -> String {
-    String::from("hello")
 }

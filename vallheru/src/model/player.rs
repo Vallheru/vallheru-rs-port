@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
-#[derive(FromRow, Serialize, Deserialize)]
+#[derive(FromRow, Serialize, Deserialize, Clone, Debug)]
 pub struct Player {
     pub id: i32,
     pub username: String,
