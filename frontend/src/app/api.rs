@@ -6,6 +6,7 @@ static API_URL: &str = "http://nebula-dev.local.mainnet.community:3004";
 pub struct ApiRequestBuilder<'a, Q, H, H2, FHE, FUE> {
     query: Q,
     client: Option<&'a reqwest::Client>,
+    token: Option<&'a str>,
     on_begin_func: Option<H>,
     on_finish_func: Option<H2>,
     on_handled_error_func: Option<FHE>,
@@ -24,11 +25,18 @@ where
         ApiRequestBuilder {
             query,
             client: None,
+            token: None,
             on_begin_func: None,
             on_finish_func: None,
             on_handled_error_func: None,
             on_unexpected_error_func: None,
         }
+    }
+
+    pub fn with_token(mut self, token: &'a str) -> Self {
+        self.token = Some(token);
+
+        self
     }
 
     pub fn with_client(mut self, client: &'a reqwest::Client) -> Self {
@@ -70,7 +78,7 @@ where
         }
 
         let req: vallheru::api::Result<R> =
-            vallheru::api::api_request(self.client, API_URL, &self.query).await;
+            vallheru::api::api_request(self.client, API_URL, &self.query, self.token).await;
 
         match req {
             Err(err) => match err {
