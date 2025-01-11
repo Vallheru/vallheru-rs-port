@@ -1,6 +1,13 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
+#[derive(sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[sqlx(type_name = "PLAYER_RANK", rename_all = "lowercase")]
+pub enum PlayerRank {
+    Admin,
+    Member,
+}
+
 #[derive(FromRow, Serialize, Deserialize, Clone, Debug)]
 pub struct Player {
     pub id: i32,
@@ -12,6 +19,22 @@ pub struct Player {
     // #[serde(with = "crate::date::option_date_serializer")] // declaring
     pub last_login: Option<crate::DateTime>,
     pub login_count: i32,
+    pub rank: PlayerRank,
+    pub last_page: String,
+
+    pub level: i32,
+    pub exp: i32,
+    pub hp: i32,
+    pub max_hp: i32,
+    pub sp: i32,
+    pub energy: i32,
+    pub max_energy: i32,
+    pub inc_energy: i32,
+
+    pub gold: i32,
+    pub bank: i32,
+    pub mithrill: i32,
+    pub vallars: i32,
 }
 
 // #[cfg(test)]
