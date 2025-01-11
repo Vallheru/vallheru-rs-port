@@ -3,6 +3,7 @@ pub mod components;
 pub mod player_state;
 pub mod utils;
 
+use components::GameTemplate;
 use components::HomeTemplate;
 use leptos::prelude::*;
 use reactive_stores::Store;
@@ -33,14 +34,14 @@ pub fn App() -> impl IntoView {
         }
     });
 
-    let log_out = move |_| set_player_context.set(player_state::Context::new());
+    // let log_out = move |_| set_player_context.set(player_state::Context::new());
 
     view! {
         <Show
             when=move || { player_context.get().in_game }
             fallback=|| view! { <HomeTemplate /> }
         >
-            <div>Logged in, <a on:click=log_out>Log out</a></div>
+            <GameTemplate />
         </Show>
     }
 }

@@ -24,6 +24,13 @@ module.exports = {
           300: "#d4c0a2",
           400: "#d0cabd",
         },
+        game: {
+          text: "#efec95",
+          link: "#bfbfbf",
+          green: "#53cf29",
+          red: "#bf0000",
+          border: "#c9af90",
+        },
       },
     },
   },

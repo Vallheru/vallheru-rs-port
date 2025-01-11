@@ -75,4 +75,14 @@
     font-weight: 900;
     font-style: italic;
   }
+
+
+  /* Game windows styles */
+  .game-window {
+    color: #efec95;
+  }
+
+  .game-window a {
+    color: #bfbfbf
+  }
 }
