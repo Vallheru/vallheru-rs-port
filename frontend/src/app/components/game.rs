@@ -1,8 +1,27 @@
 use leptos::prelude::*;
 use leptos_meta::*;
+use vallheru::api::{player::PlayerIdentifier, PlayerRequest, PlayerResponse, Result};
+
+use crate::{api::Client, player_state::Context};
 
 #[component]
 pub fn GameTemplate() -> impl IntoView {
+    // Also client is
+    let client = Client::new().with_stored_token::<Context>(); // may panic. Token must be obtained from the player context
+    provide_context(client.clone());
+
+    let player_resource = LocalResource::new(async move || {
+        let client = Client::new().with_stored_token::<Context>();
+        client
+            .send_and_unwrap::<_, PlayerResponse>(
+                &PlayerRequest {
+                    identifier: PlayerIdentifier::AuthToken,
+                },
+                |err| leptos::logging::log!("failed to get player resource: {:?}", err),
+            )
+            .await
+    });
+
     view! {
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico" />
         <Body
@@ -15,7 +34,8 @@ pub fn GameTemplate() -> impl IntoView {
                 </div>
 
                 <div class="w-52 border-1 border-game-border flex-grow-0">
-                    <PlayerStatistics />
+                    <PlayerStatistics
+                        resource=player_resource />
 
                     <GameLinks />
                 </div>
@@ -42,34 +62,34 @@ fn GameHeader() -> impl IntoView {
 }
 
 #[component]
-fn PlayerStatistics() -> impl IntoView {
-    // let (count, set_count) = signal(0);
-    // let player = LocalResource::new(move || {
-    //     ApiRequestBuilder::new(PlayerRequest {
-    //         identifier: PlayerIdentifier::AuthToken,
-    //     })
-    //     .on_finish(|| {})
-    //     .on_handled_error(|x| {})
-    //     .on_unexpected_error(|x| {})
-    //     .with_token("token")
-    //     .execute(|res: PlayerResponse| {})
-    // });
-
+fn PlayerStatistics(resource: LocalResource<Option<PlayerResponse>>) -> impl IntoView {
     view! {
         <div>
-            <p class="text-center"><b>"Player stats"</b></p>
-            <p class="text-center"><b>"admin"</b>" (1)"</p>
-            <br />
+            <Suspense
+                fallback=move || view! { <p>"Loading..."</p> }
+            >
+                <p class="text-center"><b>"Player stats"</b></p>
+                {move || Suspend::new(async move {
+                    let player = resource.await.unwrap();
+                    leptos::logging::log!("{:?}", player);
 
-            <p><b>"HP:"</b>" 15/15"</p>
-            <p><b>"SP:"</b>" 3"</p>
-            <p><b>"Energy:"</b>" 212.00/1500"</p>
-            <br />
+                    view!{
+                        <p class="text-center"><b>{player.player.username}</b>" ("{player.player.id}")"</p>
+                        <br />
 
-            <p><b>"Gold:"</b>" 1000"</p>
-            <p><b>"Bank:"</b>" 0"</p>
-            <p><b>"Mithrill:"</b>" 0"</p>
-            <p><b>"Vallars:"</b>" 0"</p>
+                        <p><b>"HP: "</b>{player.player.hp}"/"{player.player.max_hp}</p>
+                        <p><b>"SP: "</b>{player.player.sp}</p>
+                        <p><b>"Energy: "</b>"212.00/1500"</p>
+                        <br />
+
+                        <p><b>"Gold: "</b>{player.player.gold}</p>
+                        <p><b>"Bank: "</b>{player.player.bank}</p>
+                        <p><b>"Mithrill: "</b>{player.player.mithrill}</p>
+                        <p><b>"Vallars: "</b>{player.player.vallars}</p>
+                    }
+                })}
+
+            </Suspense>
         </div>
     }
 }

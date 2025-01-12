@@ -2,13 +2,13 @@ use super::player_state::ApiToken;
 use leptos::prelude::*;
 use reqwest::Client as ReqClient;
 use serde::{de::DeserializeOwned, Serialize};
-use vallheru::api::{api_request, ApiRequest, Result};
+use vallheru::api::{api_request, ApiError, ApiRequest, Result};
 
-static API_URL: &str = "http://nebula-dev.local.mainnet.community:3004";
-
+#[derive(Clone)]
 pub struct Client {
     client: ReqClient,
     token: Option<String>,
+    api_url: String,
 }
 
 impl Client {
@@ -16,6 +16,7 @@ impl Client {
         Self {
             client: ReqClient::new(),
             token: None,
+            api_url: String::from("http://nebula-dev.local.mainnet.community:3004"),
         }
     }
 
@@ -23,6 +24,7 @@ impl Client {
         Self {
             client,
             token: None,
+            api_url: String::from("http://nebula-dev.local.mainnet.community:3004"),
         }
     }
 
@@ -43,11 +45,32 @@ impl Client {
         self
     }
 
-    pub async fn send<Q, R>(self, query: &Q) -> Result<R>
+    pub async fn send<Q, R>(&self, query: &Q) -> Result<R>
     where
         Q: ApiRequest + Serialize,
         R: DeserializeOwned,
     {
-        api_request(Some(&self.client), API_URL, query, self.token).await
+        api_request(Some(&self.client), &self.api_url, query, self.token.clone()).await
+    }
+
+    pub async fn send_and_unwrap<Q, R>(
+        &self,
+        query: &Q,
+        on_error: impl FnOnce(&ApiError),
+    ) -> Option<R>
+    where
+        Q: ApiRequest + Serialize,
+        R: DeserializeOwned + 'static,
+    {
+        let result: Result<R> =
+            api_request(Some(&self.client), &self.api_url, query, self.token.clone()).await;
+
+        match result {
+            Ok(res) => Some(res),
+            Err(ref err) => {
+                on_error(err);
+                None
+            }
+        }
     }
 }

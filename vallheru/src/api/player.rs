@@ -1,7 +1,7 @@
 use super::{ApiMethod, ApiRequest, Stringify};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, PartialEq)]
+#[derive(Serialize, Deserialize, PartialEq)]
 pub enum PlayerIdentifier {
     AuthToken,
 }
@@ -13,6 +13,7 @@ impl<'a> Stringify<'a> for PlayerIdentifier {
             _ => Self::AuthToken, // may be changed in the future, for now we do not have any other type
         }
     }
+
     fn to_str(&self) -> &'a str {
         match self {
             Self::AuthToken => "AuthToken",
@@ -20,12 +21,12 @@ impl<'a> Stringify<'a> for PlayerIdentifier {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct PlayerRequest {
     pub identifier: PlayerIdentifier,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PlayerResponse {
     pub player: crate::model::Player,
 }

@@ -23,6 +23,7 @@ pub async fn get_player_by_email(
         .fetch_one(db)
         .await;
 
+    println!("{:?}", player);
     match player {
         Ok(player) => {
             if vallheru::password_utils::is_valid_password(pass, &player.password) {
