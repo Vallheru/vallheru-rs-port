@@ -43,4 +43,4 @@ CREATE TABLE token (
             REFERENCES player(id)
 );
 
-INSERT INTO player (username, password, email) VALUES('admin', '$2b$12$mzgQhjnYGgzAWX5jnI6JaOlbzjgjJ/ppEZpSd.kUtMhwA7LcAou6K', 'admin@vallheru.pl'); -- password is admin
+INSERT INTO player (username, password, email, rank) VALUES('admin', '$2b$12$mzgQhjnYGgzAWX5jnI6JaOlbzjgjJ/ppEZpSd.kUtMhwA7LcAou6K', 'admin@vallheru.pl', 'admin'); -- password is admin
