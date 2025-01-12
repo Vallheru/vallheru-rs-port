@@ -13,6 +13,8 @@ use reqwest::Url;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
+pub static NoToken: Option<&'static str> = None;
+
 pub enum ApiMethod {
     Get,
     Post,
@@ -55,6 +57,17 @@ impl From<ErrorResponse> for ApiError {
 
 pub type Result<T> = std::result::Result<T, ApiError>;
 
+pub fn handle_api_error(
+    err: &ApiError,
+    error_response_handler: impl FnOnce(&ErrorResponse),
+    unexpected_error_handler: impl FnOnce(&ApiError),
+) {
+    match err {
+        ApiError::Api(error_response) => error_response_handler(error_response),
+        _ => unexpected_error_handler(err),
+    }
+}
+
 fn default_client() -> reqwest::Client {
     reqwest::Client::new()
 }
@@ -63,7 +76,7 @@ pub async fn api_request<Q, R>(
     client: Option<&reqwest::Client>,
     base_url: &str,
     req: &Q,
-    token: Option<&str>,
+    token: Option<impl Into<String>>,
 ) -> Result<R>
 where
     Q: ApiRequest + Serialize,
@@ -82,7 +95,7 @@ where
     };
 
     if let Some(token) = token {
-        request = request.header("Authorization", format!("Token {}", token));
+        request = request.header("Authorization", format!("Token {}", token.into()));
     }
 
     let response = request.send().await?;

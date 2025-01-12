@@ -1,12 +1,21 @@
 use leptos::prelude::*;
-use reactive_stores::Store;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Store, Serialize, Deserialize)]
+pub trait ApiToken {
+    fn get_token(&self) -> String;
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Context {
-    pub auth: String,
+    pub token: String,
     pub id: i32,
     pub in_game: bool,
+}
+
+impl ApiToken for Context {
+    fn get_token(&self) -> String {
+        self.token.clone()
+    }
 }
 
 pub const STORAGE_KEY: &str = "vallheru-player-context";
@@ -14,7 +23,7 @@ pub const STORAGE_KEY: &str = "vallheru-player-context";
 impl Context {
     pub fn new() -> Self {
         Self {
-            auth: "".to_string(),
+            token: String::from(""),
             id: 0,
             in_game: false,
         }

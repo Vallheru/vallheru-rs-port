@@ -5,12 +5,12 @@ use leptos_router::{
     path,
 };
 use vallheru::{
-    api::{LoginRequest, LoginResponse},
+    api::{handle_api_error, LoginRequest, LoginResponse, Result},
     name_generator::random_name,
 };
 use web_sys::SubmitEvent;
 
-use crate::{api::ApiRequestBuilder, player_state::Context};
+use crate::{api::Client, player_state::Context};
 
 const COMMON_FORM_CLASS: &str = "px-4 py-2 rounded-md border-2 border-[#1e1a20] bg-gradient-to-r from-vallheru-creme-100 to-vallheru-creme-400";
 const COMMON_BUTTON_CLASS: &str =
@@ -316,36 +316,41 @@ fn Login() -> impl IntoView {
             .value();
 
         spawn_local(async move {
-            ApiRequestBuilder::new(LoginRequest { email, password })
-                .on_begin(|| {
-                    set_disabled_button.set(true);
-                    set_app_context.update(|ctx| ctx.global_loading = true);
-                })
-                .on_finish(|| {
-                    set_disabled_button.set(false);
-                    set_app_context.update(|ctx| ctx.global_loading = false);
-                })
-                .on_unexpected_error(|err| {
-                    set_login_error_msg.set(String::from("Unexpected error happend during login"));
-                    set_logged_in_show.set(false);
-                    leptos::logging::error!("Unexpected error: {}", err);
-                })
-                .on_handled_error(|err| {
-                    set_login_error_msg.set(err.details);
-                    set_logged_in_show.set(false);
-                })
-                .send(|res: LoginResponse| {
+            set_disabled_button.set(true);
+            set_app_context.update(|ctx| ctx.global_loading = true);
+            let res: Result<LoginResponse> =
+                Client::new().send(&LoginRequest { email, password }).await;
+
+            match res {
+                Err(ref e) => handle_api_error(
+                    e,
+                    |err| {
+                        set_login_error_msg.set(err.details.clone());
+                        set_logged_in_show.set(false);
+                    },
+                    |err| {
+                        set_login_error_msg
+                            .set(String::from("Unexpected error happend during login"));
+                        set_logged_in_show.set(false);
+                        leptos::logging::error!("Unexpected error: {}", err);
+                    },
+                ),
+                Ok(api_response) => {
+                    leptos::logging::log!("{:?}", api_response);
+
                     set_login_error_msg.set(String::new());
 
-                    set_login_count.set(res.login_count);
+                    set_login_count.set(api_response.login_count);
                     set_player_state.update(|context| {
-                        context.auth = res.token;
-                        context.id = res.id;
+                        context.token = api_response.token;
+                        context.id = api_response.id;
                     });
-
                     set_logged_in_show.set(true);
-                })
-                .await;
+                }
+            }
+
+            set_disabled_button.set(false);
+            set_app_context.update(|ctx| ctx.global_loading = false);
         });
     };
 

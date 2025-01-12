@@ -1,6 +1,6 @@
 use anyhow::Result;
 use serde_json::json;
-use vallheru::api::login;
+use vallheru::api::{login, NoToken};
 
 async fn valid_login() -> Result<()> {
     let hc = httpc_test::new_client("http://localhost:3004")?;
@@ -67,7 +67,7 @@ async fn login() -> vallheru::api::Result<vallheru::api::LoginResponse> {
             email: String::from("admin@vallheru.pl"),
             password: String::from("admin"),
         },
-        None,
+        NoToken,
     )
     .await
 }
@@ -89,6 +89,7 @@ async fn test_player_api_endpoint() {
 
     let player = get_player(&login_resp.token).await.unwrap().player;
     assert_eq!(1, player.id);
+    println!("{:?}", player);
 }
 
 #[tokio::main]

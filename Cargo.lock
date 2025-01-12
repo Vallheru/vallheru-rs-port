@@ -3647,6 +3647,7 @@ dependencies = [
  "bcrypt",
  "chrono",
  "getrandom",
+ "http",
  "rand",
  "reqwest",
  "serde",
