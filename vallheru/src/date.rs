@@ -6,6 +6,10 @@ pub fn from_string(date: &str) -> Result<DateTime> {
     Ok(chrono::NaiveDateTime::parse_from_str(date, "%Y-%m-%d %H:%M:%S%.f")?.and_utc())
 }
 
+pub fn new_now() -> DateTime {
+    chrono::Utc::now()
+}
+
 pub mod date_serializer {
     use super::DateTime;
     use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};

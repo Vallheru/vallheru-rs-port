@@ -42,3 +42,17 @@ pub async fn extend_token_for_player(db: &sqlx::PgPool, player_id: i32, token: &
     .map(|_| ())
     .map_err(|e| e.into())
 }
+
+pub async fn get_token(db: &sqlx::PgPool, token: &str) -> Option<Token> {
+    let token = sqlx::query_as::<_, Token>(
+        r"SELECT * FROM token WHERE token=$1",
+    )
+    .bind(token)
+    .fetch_one(db)
+    .await;
+
+    match token {
+        Ok(token) => Some(token),
+        _ => None,
+    }
+}

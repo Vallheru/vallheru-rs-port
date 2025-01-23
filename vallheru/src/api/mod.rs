@@ -6,6 +6,10 @@ pub mod player;
 pub use player::PlayerRequest;
 pub use player::PlayerResponse;
 
+pub mod token;
+pub use token::IsTokenValidRequest;
+pub use token::IsTokenValidResponse;
+
 pub mod error;
 pub use error::ErrorResponse;
 pub use error::ErrorResponseKind;
