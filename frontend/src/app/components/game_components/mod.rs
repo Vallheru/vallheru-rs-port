@@ -1,0 +1,27 @@
+pub mod bank;
+pub mod chat;
+pub mod city;
+pub mod equipment;
+pub mod fighting_arena;
+pub mod forum;
+pub mod hospital;
+pub mod library;
+pub mod minerals;
+pub mod news;
+pub mod notes;
+pub mod player_statistics;
+pub mod post_office;
+
+pub use bank::BankMain;
+pub use chat::ChatMain;
+pub use city::CityMain;
+pub use equipment::EquipmentMain;
+pub use fighting_arena::FightingArenaMain;
+pub use forum::ForumMain;
+pub use hospital::HospitalMain;
+pub use library::LibraryMain;
+pub use minerals::MineralsMain;
+pub use news::NewsMain;
+pub use notes::NotesMain;
+pub use player_statistics::PlayerStatisticsMain;
+pub use post_office::PostOfficeMain;

@@ -1,8 +1,14 @@
 use leptos::prelude::*;
 use leptos_meta::*;
 use vallheru::api::{player::PlayerIdentifier, PlayerRequest, PlayerResponse};
-
+use leptos_router::{
+    components::{Route, Router, Routes},
+    path,
+};
 use crate::{api::Client, player_state::Context};
+use crate::components::game_components::*;
+
+
 
 #[component]
 pub fn GameMain() -> impl IntoView {
@@ -178,41 +184,41 @@ fn GameLinks() -> impl IntoView {
             </p>
             <ul>
                 <li>
-                    <a href="#">"Player"statistics</a>
+                    <a href="/player-statistics">"Player"statistics</a>
                 </li>
                 <li>
-                    <a href="#">"Minerals"</a>
+                    <a href="/minerals">"Minerals"</a>
                 </li>
                 <li>
-                    <a href="#">"Equipment"</a>
+                    <a href="/equipment">"Equipment"</a>
                 </li>
                 <li class="mb-2">
-                    <a href="#">"Notes"</a>
+                    <a href="/notes">"Notes"</a>
                 </li>
 
                 <li>
-                    <a href="#">"Altara"</a>
+                    <a href="/city">"Altara"</a>
                 </li>
                 <li>
-                    <a href="#">"Fighting arena"</a>
+                    <a href="/fighting-arena">"Fighting arena"</a>
                 </li>
                 <li>
-                    <a href="#">"Hospital"</a>
+                    <a href="/hospital">"Hospital"</a>
                 </li>
                 <li class="mb-2">
-                    <a href="#">"Bank"</a>
+                    <a href="/bank">"Bank"</a>
                 </li>
 
                 <li>
-                    <a href="#">"Post office"</a>
+                    <a href="post-office">"Post office"</a>
                     " [0]"
                 </li>
                 <li>
-                    <a href="#">"Forum"</a>
+                    <a href="/forum">"Forum"</a>
                     " [0]"
                 </li>
                 <li>
-                    <a href="#">"Inn"</a>
+                    <a href="/chat">"Inn"</a>
                     " [0]"
                 </li>
 
@@ -224,27 +230,24 @@ fn GameLinks() -> impl IntoView {
 #[component]
 fn GameContent() -> impl IntoView {
     view! {
-        <div>
-            <p class="text-center">Library</p>
-            <p>
-                "Welcome to the Library, a sanctuary of stories and verses left behind by travelers who have
-                wandered far and wide along life's many paths. Here, amidst the quiet hum of ancient tomes and 
-                the gentle flicker of candlelight, you’ll discover tales of heroism, whispers of lost legends, 
-                and poems that capture the very essence of the soul."
-            </p>
-            <p>
-                "If you so desire, you may add your own voice to this collection, weaving your story into
-                the fabric of this hallowed place. However, be mindful, for the Library is under the watchful 
-                care of the Librarian, a mysterious keeper of wisdom and guardian of these treasures. It is the
-                Librarian who determines which works are worthy to grace these shelves, preserving the Library’s 
-                integrity for generations to come."
-            </p>
-            <p>
-                "All rights to the texts remain with their creators, ensuring their legacy endures. At present,
-                the Library holds [number] texts, while [number] more await the Librarian’s judgment to join this 
-                esteemed archive"
-            </p>
-        </div>
+        <Router>
+            <Routes fallback=|| { "Not found" }>
+                <Route path=path!("/player-statistics") view=PlayerStatisticsMain />
+                <Route path=path!("/minerals") view=MineralsMain />
+                <Route path=path!("/equipment") view=EquipmentMain />
+                <Route path=path!("/notes") view=NotesMain />
+                <Route path=path!("/city") view=CityMain />
+                <Route path=path!("/fighting-arena") view=FightingArenaMain />
+                <Route path=path!("/hospital") view=HospitalMain />
+                <Route path=path!("/bank") view=BankMain />
+                <Route path=path!("/post-office") view=PostOfficeMain />
+                <Route path=path!("/forum") view=ForumMain />
+                <Route path=path!("/chat") view=ChatMain />
+
+                <Route path=path!("/library") view=LibraryMain />
+                <Route path=path!("/news") view=NewsMain />
+            </Routes>
+        </Router>
     }
 }
 
