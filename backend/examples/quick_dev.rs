@@ -1,6 +1,6 @@
 use anyhow::Result;
 use serde_json::json;
-use vallheru::api::{login, NoToken};
+use vallheru::api::{login, IsTokenValidResponse, NoToken};
 
 async fn valid_login() -> Result<()> {
     let hc = httpc_test::new_client("http://localhost:3004")?;
@@ -59,6 +59,18 @@ async fn protected_endpoint() -> Result<()> {
     Ok(())
 }
 
+async fn is_valid_token(token_str: String) -> vallheru::api::Result<IsTokenValidResponse> {
+    vallheru::api::api_request(
+        None,
+        "http://localhost:3004",
+        &vallheru::api::IsTokenValidRequest{
+            token: token_str
+        },
+        NoToken,
+    )
+    .await
+}
+
 async fn login() -> vallheru::api::Result<vallheru::api::LoginResponse> {
     vallheru::api::api_request(
         None,
@@ -92,6 +104,13 @@ async fn test_player_api_endpoint() {
     println!("{:?}", player);
 }
 
+async fn test_is_token_valid() {
+    let login_resp = login().await.unwrap();
+    let res = is_valid_token(login_resp.token).await.unwrap();
+
+    assert!(res.is_valid);
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     // valid_login().await?;
@@ -99,6 +118,7 @@ async fn main() -> Result<()> {
     // not_found_fallback().await?;
 
     // protected_endpoint().await?;
-    test_player_api_endpoint().await;
+    // test_player_api_endpoint().await;
+    test_is_token_valid().await;
     Ok(())
 }

@@ -2,13 +2,17 @@ use super::player_state::ApiToken;
 use leptos::prelude::*;
 use reqwest::Client as ReqClient;
 use serde::{de::DeserializeOwned, Serialize};
-use vallheru::api::{api_request, ApiError, ApiRequest, Result};
+use vallheru::api::{api_request, ApiError, ApiRequest, IsTokenValidRequest, IsTokenValidResponse, Result};
 
 #[derive(Clone)]
 pub struct Client {
     client: ReqClient,
     token: Option<String>,
     api_url: String,
+}
+
+pub fn default_error_handler(err: &ApiError) {
+    leptos::logging::error!("{}", err)
 }
 
 impl Client {
@@ -59,8 +63,8 @@ impl Client {
         on_error: impl FnOnce(&ApiError),
     ) -> Option<R>
     where
-        Q: ApiRequest + Serialize,
-        R: DeserializeOwned + 'static,
+        Q: ApiRequest + Serialize + Send,
+        R: Clone + Send + DeserializeOwned + 'static,
     {
         let result: Result<R> =
             api_request(Some(&self.client), &self.api_url, query, self.token.clone()).await;
@@ -70,6 +74,29 @@ impl Client {
             Err(ref err) => {
                 on_error(err);
                 None
+            }
+        }
+    }
+
+    pub async fn validate_token(&self) -> IsTokenValidResponse {
+        match &self.token {
+            None => {
+                IsTokenValidResponse::default_invalid_empty_token()
+            },
+            Some(token) => {
+                if token.is_empty() {
+                    IsTokenValidResponse::default_invalid_empty_token()
+                } else {
+                    let result = self.send_and_unwrap::<_, IsTokenValidResponse>(
+                        &IsTokenValidRequest {
+                            token: token.clone()
+                        }, default_error_handler).await;
+
+                    match result {
+                        None => IsTokenValidResponse::default_invalid_internal_error(),
+                        Some(response) => response
+                    }
+                }
             }
         }
     }

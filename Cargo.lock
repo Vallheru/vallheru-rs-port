@@ -838,6 +838,7 @@ dependencies = [
  "leptos_router",
  "reactive_stores",
  "reqwest",
+ "send_wrapper",
  "serde",
  "serde_json",
  "vallheru",

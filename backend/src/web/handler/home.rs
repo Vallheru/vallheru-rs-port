@@ -50,7 +50,7 @@ pub async fn post_is_token_valid(
         }),
         Some(token) => {
             let now = date::new_now();
-            if token.valid_until > now {
+            if token.valid_until < now {
                 Json(IsTokenValidResponse{
                     is_valid: false,
                     reason: String::from("Token expired")
