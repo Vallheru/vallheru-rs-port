@@ -1,6 +1,6 @@
 pub mod api;
 pub mod components;
-pub mod player_state;
+pub mod context;
 pub mod utils;
 
 use components::GameMain;
@@ -15,8 +15,8 @@ pub struct AppContext {
 
 #[component]
 pub fn App() -> impl IntoView {
-    provide_context(Store::new(player_state::Context::default()));
-    let (player_context, set_player_context) = signal(player_state::Context::default());
+    provide_context(Store::new(context::Context::default()));
+    let (player_context, set_player_context) = signal(context::Context::default());
     let (app_context, set_app_context) = signal(AppContext::default());
     provide_context(player_context);
     provide_context(set_player_context);
@@ -28,7 +28,7 @@ pub fn App() -> impl IntoView {
             let json =
                 serde_json::to_string(&player_context).expect("could not serialize PlayerContext");
 
-            if stor.set_item(player_state::STORAGE_KEY, &json).is_err() {
+            if stor.set_item(context::STORAGE_KEY, &json).is_err() {
                 leptos::logging::error!("failed to save player context to local storage");
             }
         }

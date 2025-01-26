@@ -1,5 +1,8 @@
 use leptos::prelude::*;
 use serde::{Deserialize, Serialize};
+use vallheru::model::Player;
+
+pub type ContextUpdateAction = Action<i64, ()>;
 
 pub trait ApiToken {
     fn get_token(&self) -> String;
@@ -10,6 +13,7 @@ pub struct Context {
     pub token: String,
     pub id: i32,
     pub in_game: bool,
+    pub player: Player,
 }
 
 impl ApiToken for Context {
@@ -26,6 +30,7 @@ impl Context {
             token: String::from(""),
             id: 0,
             in_game: false,
+            player: Player::default(),
         }
     }
 }

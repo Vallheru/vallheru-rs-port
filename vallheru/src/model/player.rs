@@ -2,27 +2,30 @@ use bigdecimal::BigDecimal;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
-#[derive(sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug)]
 #[sqlx(type_name = "PLAYER_RANK", rename_all = "lowercase")]
 pub enum PlayerRank {
     Admin,
     Staff,
+    #[default]
     Member,
 }
 
-#[derive(sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug)]
 #[sqlx(type_name = "PLAYER_GENDER", rename_all = "lowercase")]
 pub enum PlayerGender {
     #[sqlx(rename = "")]
+    #[default]
     Unknown,
     Male,
     Female,
 }
 
-#[derive(sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug)]
 #[sqlx(type_name = "PLAYER_RELIGION", rename_all = "lowercase")]
 pub enum PlayerReligion {
     #[sqlx(rename = "")]
+    #[default]
     Atheist,
     Illuminati,
     Karserth,
@@ -36,10 +39,11 @@ pub enum PlayerReligion {
     Thindil,
 }
 
-#[derive(sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug)]
 #[sqlx(type_name = "PLAYER_RACE", rename_all = "lowercase")]
 pub enum PlayerRace {
     #[sqlx(rename = "")]
+    #[default]
     Unknown,
     Human,
     Elf,
@@ -49,10 +53,11 @@ pub enum PlayerRace {
     Gnome,
 }
 
-#[derive(sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug)]
 #[sqlx(type_name = "PLAYER_CLASS", rename_all = "lowercase")]
 pub enum PlayerClass {
     #[sqlx(rename = "")]
+    #[default]
     Unknown,
     Warrior,
     Mage,
@@ -61,7 +66,7 @@ pub enum PlayerClass {
     Thief,
 }
 
-#[derive(FromRow, Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, FromRow, Serialize, Deserialize, Clone, Debug)]
 pub struct Player {
     pub id: i32,
     pub username: String,

@@ -1,11 +1,11 @@
-use leptos::prelude::*;
+use leptos::{prelude::*};
 use leptos_meta::*;
-use vallheru::api::{player::PlayerIdentifier, PlayerRequest, PlayerResponse};
+use vallheru::{api::{player::PlayerIdentifier, PlayerRequest, PlayerResponse},};
 use leptos_router::{
-    components::{Route, ParentRoute, Router, Routes},
+    components::{Route, Router, Routes},
     path,
 };
-use crate::{api::Client, player_state::Context};
+use crate::{api::Client, context::{Context, ContextUpdateAction}};
 use crate::components::game_components::*;
 
 
@@ -66,6 +66,8 @@ fn InvalidToken() -> impl IntoView {
 
 #[component]
 fn GameTemplate() -> impl IntoView {
+    
+
     // Also client is
     let client = Client::new().with_stored_token::<Context>(); // may panic. Token must be obtained from the player context
     provide_context(client.clone());
@@ -82,6 +84,21 @@ fn GameTemplate() -> impl IntoView {
             .await
     });
 
+    let update_game_context: ContextUpdateAction = Action::new(move |_time: &i64| {
+        let set_player_context = use_context::<WriteSignal<Context>>()
+        // we know we just provided this in the parent component
+        .expect("expected WriteSignal<Context> signal to be provided");
+    
+        async move {
+            let this_player = player_resource.await.unwrap();
+
+            set_player_context.update(move |ctx| {
+                ctx.player = this_player.player
+            });
+        }
+    });
+    provide_context(update_game_context);
+    
     view! {
         <div class="w-full text-center border-1 border-game-border p-2">
             <GameHeader />

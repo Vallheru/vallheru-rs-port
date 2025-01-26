@@ -5,6 +5,8 @@ use leptos_router::{
     path, MatchNestedRoutes,
 };
 
+use crate::app::context::ContextUpdateAction;
+
 #[component(transparent)]
 pub fn PlayerStatisticsRoutes() -> impl MatchNestedRoutes + Clone {
     view! {
@@ -47,6 +49,10 @@ fn DisableProtection() -> impl IntoView {
 
 #[component]
 fn UseAP() -> impl IntoView {
+    let action = expect_context::<ContextUpdateAction>();
+
+    action.dispatch(1);
+
     view! { <div class="text-center">"Distribute AP"</div> }
 }
 
