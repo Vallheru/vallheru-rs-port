@@ -2,7 +2,7 @@ use leptos::prelude::*;
 use leptos_meta::*;
 use vallheru::api::{player::PlayerIdentifier, PlayerRequest, PlayerResponse};
 use leptos_router::{
-    components::{Route, Router, Routes},
+    components::{Route, ParentRoute, Router, Routes},
     path,
 };
 use crate::{api::Client, player_state::Context};
@@ -231,8 +231,8 @@ fn GameLinks() -> impl IntoView {
 fn GameContent() -> impl IntoView {
     view! {
         <Router>
-            <Routes fallback=|| { "Not found" }>
-                <Route path=path!("/player-statistics") view=PlayerStatisticsMain />
+            <Routes transition=true fallback=|| { "Not found" }>
+                <PlayerStatisticsRoutes />
                 <Route path=path!("/minerals") view=MineralsMain />
                 <Route path=path!("/equipment") view=EquipmentMain />
                 <Route path=path!("/notes") view=NotesMain />

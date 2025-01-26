@@ -1,22 +1,64 @@
 use leptos::prelude::*;
 
+use leptos_router::{
+    components::{Outlet, ParentRoute, Route},
+    path, MatchNestedRoutes,
+};
+
+#[component(transparent)]
+pub fn PlayerStatisticsRoutes() -> impl MatchNestedRoutes + Clone {
+    view! {
+        <ParentRoute path=path!("/player-statistics") view=PlayerStatisticsMain>
+            <Route path=path!("") view=|| {} />
+            <Route path=path!("use-ap") view=UseAP />
+            <Route path=path!("select-bloodline") view=SelectBloodline />
+            <Route path=path!("select-class") view=SelectClass />
+            <Route path=path!("select-religion") view=SelectReligion />
+            <Route path=path!("select-gender") view=SelectGender />
+            <Route path=path!("disable-protection") view=DisableProtection />
+        </ParentRoute>
+    }
+    .into_inner()
+}
+
 #[component]
-pub fn Row(
+fn SelectBloodline() -> impl IntoView {
+    view! { <div class="text-center">"Select bloodline"</div> }
+}
+
+#[component]
+fn SelectClass() -> impl IntoView {
+    view! { <div class="text-center">"Select class"</div> }
+}
+
+#[component]
+fn SelectReligion() -> impl IntoView {
+    view! { <div class="text-center">"Select religion"</div> }
+}
+
+#[component]
+fn SelectGender() -> impl IntoView {
+    view! { <div class="text-center">"Select gender"</div> }
+}
+#[component]
+fn DisableProtection() -> impl IntoView {
+    view! { <div class="text-center">"Disable protection"</div> }
+}
+
+#[component]
+fn UseAP() -> impl IntoView {
+    view! { <div class="text-center">"Distribute AP"</div> }
+}
+
+#[component]
+fn Row(
     name: &'static str,
     #[prop(default = "")] title: &'static str,
     value: impl IntoView,
 
     #[prop(default = "")] additional_action_text: &'static str,
     #[prop(default = "#")] additional_action_path: &'static str,
-    #[prop(default = None)] action_activation_signal: Option<WriteSignal<bool>>,
 ) -> impl IntoView {
-    let activate_additional_action = move |_| {
-        if action_activation_signal.is_none() {
-            return;
-        }
-        action_activation_signal.unwrap().set(true);
-    };
-
     view! {
         <p title=if !title.is_empty() { title } else { "" }>
             <b>{name}": "</b>
@@ -24,27 +66,18 @@ pub fn Row(
 
             <Show when=move || {
                 !additional_action_text.is_empty()
-            }>
-                " (" <a on:click=activate_additional_action href=additional_action_path>
-                    {additional_action_text}
-                </a> ")"
-            </Show>
+            }>" (" <a href=additional_action_path>{additional_action_text}</a> ")"</Show>
         </p>
     }
 }
 
 #[component]
 pub fn PlayerStatisticsMain() -> impl IntoView {
-    let (use_ap, set_use_ap) = signal(false);
-    let (select_bloodline, set_select_bloodline) = signal(false);
-    let (select_class, set_select_class) = signal(false);
-    let (select_religion, set_select_religion) = signal(false);
-    let (select_gender, set_select_gender) = signal(false);
-    let (disable_protection, set_disable_protection) = signal(false);
-
     view! {
         <div>
             <p class="text-center">Player statistics</p>
+
+            <Outlet />
 
             <div class="w-full flex flex-wrap">
                 <div class="w-1/2">
@@ -58,7 +91,6 @@ pub fn PlayerStatisticsMain() -> impl IntoView {
                         value=view! { "5" }
                         additional_action_text="Use"
                         additional_action_path="/player-statistics/use-ap"
-                        action_activation_signal=Some(set_use_ap)
                     />
                     <Row
                         title="Race"
@@ -66,7 +98,6 @@ pub fn PlayerStatisticsMain() -> impl IntoView {
                         value=view! { "..." }
                         additional_action_text="Select"
                         additional_action_path="/player-statistics/select-bloodline"
-                        action_activation_signal=Some(set_select_bloodline)
                     />
                     <Row
                         title="Class"
@@ -74,21 +105,18 @@ pub fn PlayerStatisticsMain() -> impl IntoView {
                         value=view! { "..." }
                         additional_action_text="Select"
                         additional_action_path="/player-statistics/select-class"
-                        action_activation_signal=Some(set_select_class)
                     />
                     <Row
                         name="Religion"
                         value=view! { "..." }
                         additional_action_text="Select"
                         additional_action_path="/player-statistics/select-religion"
-                        action_activation_signal=Some(set_select_religion)
                     />
                     <Row
                         name="Gender"
                         value=view! { "..." }
                         additional_action_text="Select"
                         additional_action_path="/player-statistics/select-gender"
-                        action_activation_signal=Some(set_select_gender)
                     />
                     <Row name="Agility" value=view! { "0" } />
                     <Row name="Strength" value=view! { "0" } />
@@ -143,7 +171,6 @@ pub fn PlayerStatisticsMain() -> impl IntoView {
                         value=view! { "3 days" }
                         additional_action_text="Disable"
                         additional_action_path="/player-statistics/disable-protection"
-                        action_activation_signal=Some(set_disable_protection)
                     />
 
                     <Row name="Tribe" value=view! { "..." } />

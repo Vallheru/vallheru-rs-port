@@ -23,5 +23,5 @@ pub use library::LibraryMain;
 pub use minerals::MineralsMain;
 pub use news::NewsMain;
 pub use notes::NotesMain;
-pub use player_statistics::PlayerStatisticsMain;
+pub use player_statistics::{PlayerStatisticsMain, PlayerStatisticsRoutes};
 pub use post_office::PostOfficeMain;
