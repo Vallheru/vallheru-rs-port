@@ -1,3 +1,4 @@
+use bigdecimal::BigDecimal;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
@@ -5,7 +6,59 @@ use sqlx::FromRow;
 #[sqlx(type_name = "PLAYER_RANK", rename_all = "lowercase")]
 pub enum PlayerRank {
     Admin,
+    Staff,
     Member,
+}
+
+#[derive(sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[sqlx(type_name = "PLAYER_GENDER", rename_all = "lowercase")]
+pub enum PlayerGender {
+    #[sqlx(rename = "")]
+    Unknown,
+    Male,
+    Female,
+}
+
+#[derive(sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[sqlx(type_name = "PLAYER_RELIGION", rename_all = "lowercase")]
+pub enum PlayerReligion {
+    #[sqlx(rename = "")]
+    Atheist,
+    Illuminati,
+    Karserth,
+    Anariel,
+    Heluvald,
+    Tartus,
+    Oregarl,
+    Daeraell,
+    #[sqlx(rename = "teathe-di")]
+    TeatheDi,
+    Thindil,
+}
+
+#[derive(sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[sqlx(type_name = "PLAYER_RACE", rename_all = "lowercase")]
+pub enum PlayerRace {
+    #[sqlx(rename = "")]
+    Unknown,
+    Human,
+    Elf,
+    Dwarf,
+    Hobbit,
+    Reptilian,
+    Gnome,
+}
+
+#[derive(sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[sqlx(type_name = "PLAYER_CLASS", rename_all = "lowercase")]
+pub enum PlayerClass {
+    #[sqlx(rename = "")]
+    Unknown,
+    Warrior,
+    Mage,
+    Craftsman,
+    Barbarian,
+    Thief,
 }
 
 #[derive(FromRow, Serialize, Deserialize, Clone, Debug)]
@@ -21,6 +74,15 @@ pub struct Player {
     pub login_count: i32,
     pub rank: PlayerRank,
     pub last_page: String,
+    pub ip: Option<String>,
+    pub protection: bool,
+    pub gender: PlayerGender,
+
+    pub last_killed: Option<i32>,
+    pub last_killed_by: Option<i32>,
+
+    pub fights_won: i32,
+    pub fights_lost: i32,
 
     pub level: i32,
     pub exp: i32,
@@ -35,6 +97,17 @@ pub struct Player {
     pub bank: i32,
     pub mithrill: i32,
     pub vallars: i32,
+
+    pub ap: i32,
+    pub race: PlayerRace,
+    pub profession: PlayerClass,
+    pub religion: PlayerReligion,
+    pub agility: BigDecimal,
+    pub strength: BigDecimal,
+    pub intelligence: BigDecimal,
+    pub wisdom: BigDecimal,
+    pub speed: BigDecimal,
+    pub stamina: BigDecimal,
 }
 
 // #[cfg(test)]

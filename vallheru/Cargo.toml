@@ -10,7 +10,8 @@ http = "1"
 serde = "1"
 serde_json = "1"
 
-sqlx = { version = "0.8", features = ["chrono"] }
+sqlx = { version = "0.8", features = ["chrono", "bigdecimal"] }
+bigdecimal = { version = "0.4", features = ["serde-json"] }
 bcrypt = "0.16.0"
 chrono = { version = "0.4", features = ["serde"] }
 

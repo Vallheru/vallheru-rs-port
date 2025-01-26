@@ -1,9 +1,42 @@
 DROP TABLE IF EXISTS player CASCADE;
 DROP TABLE IF EXISTS token CASCADE;
 DROP TYPE IF EXISTS PLAYER_RANK;
+DROP TYPE IF EXISTS PLAYER_GENDER;
+DROP TYPE IF EXISTS PLAYER_RELIGION;
+DROP TYPE IF EXISTS PLAYER_RACE;
+DROP TYPE IF EXISTS PLAYER_CLASS;
 
 CREATE TYPE PLAYER_RANK AS ENUM ('admin', 'staff', 'member');
-
+CREATE TYPE PLAYER_GENDER AS ENUM('', 'male', 'female');
+CREATE TYPE PLAYER_RELIGION AS ENUM(
+    '',
+    'illuminati',
+    'karserth',
+    'anariel',
+    'heluvald',
+    'tartus',
+    'oregarl',
+    'daeraell',
+    'teathe-di',
+    'thindil'
+);
+CREATE TYPE PLAYER_RACE AS ENUM(
+    '',
+    'human',
+    'elf',
+    'dwarf',
+    'hobbit',
+    'reptilian',
+    'gnome'
+);
+CREATE TYPE PLAYER_CLASS AS ENUM(
+    '',
+    'warrior',
+    'mage',
+    'craftsman',
+    'barbarian',
+    'thief'
+);
 
 CREATE TABLE player (
     id SERIAL PRIMARY KEY,
@@ -15,6 +48,9 @@ CREATE TABLE player (
     last_login TIMESTAMPTZ,
     rank PLAYER_RANK NOT NULL DEFAULT 'member',
     last_page VARCHAR(128) NOT NULL DEFAULT '',
+    ip INET DEFAULT NULL,
+    gender PLAYER_GENDER NOT NULL DEFAULT '',
+    protection BOOLEAN NOT NULL DEFAULT true,
 
     -- game properties
     level INT NOT NULL DEFAULT 1,
@@ -26,10 +62,26 @@ CREATE TABLE player (
     max_energy INT NOT NULL DEFAULT 100000,
     inc_energy INT NOT NULL DEFAULT 500,
 
+    last_killed INT DEFAULT NULL,
+    last_killed_by INT DEFAULT NULL,
+    fights_won INT NOT NULL DEFAULT 0,
+    fights_lost INT NOT NULL DEFAULT 0,
+
     gold INT NOT NULL DEFAULT 1000,
     bank INT NOT NULL DEFAULT 0,
     mithrill INT NOT NULL DEFAULT 0,
-    vallars INT NOT NULL DEFAULT 0
+    vallars INT NOT NULL DEFAULT 0,
+
+    ap INT NOT NULL DEFAULT 5,
+    race PLAYER_RACE NOT NULL DEFAULT '',
+    profession PLAYER_CLASS NOT NULL DEFAULT '',
+    religion PLAYER_RELIGION NOT NULL DEFAULT '',
+    agility NUMERIC(6, 4) NOT NULL DEFAULT 0.0000,
+    strength NUMERIC(6, 4) NOT NULL DEFAULT 0.0000,
+    intelligence NUMERIC(6, 4) NOT NULL DEFAULT 0.0000,
+    wisdom NUMERIC(6, 4) NOT NULL DEFAULT 0.0000,
+    speed NUMERIC(6, 4) NOT NULL DEFAULT 0.0000,
+    stamina NUMERIC(6, 4) NOT NULL DEFAULT 0.0000
 );
 
 CREATE TABLE token (
