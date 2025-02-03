@@ -1,0 +1,166 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/public/index.css" />
+    <title>Vallheru</title>
+  </head>
+  <body>
+    <div class="w-full text-center border-1 border-game-border p-2">
+      <div>
+        <b>"Time in game:"</b>
+        "19:20:03"
+        <b>" Full moon"</b>
+      </div>
+    </div>
+
+    <div class="w-52 border-1 border-game-border flex-grow-0">
+      <div>
+        <p class="text-center">
+          <b>"Player stats"</b>
+        </p>
+
+        <p class="text-center">
+          <b>{player.player.username}</b>
+          " (" {player.player.id} ")"
+        </p>
+        <br />
+
+        <p>
+          <b>"HP: "</b>
+          {player.player.hp} "/" {player.player.max_hp}
+        </p>
+        <p>
+          <b>"SP: "</b>
+          {player.player.sp}
+        </p>
+        <p>
+          <b>"Energy: "</b>
+          "212.00/1500"
+        </p>
+        <br />
+
+        <p>
+          <b>"Gold: "</b>
+          {player.player.gold}
+        </p>
+        <p>
+          <b>"Bank: "</b>
+          {player.player.bank}
+        </p>
+        <p>
+          <b>"Mithrill: "</b>
+          {player.player.mithrill}
+        </p>
+        <p>
+          <b>"Vallars: "</b>
+          {player.player.vallars}
+        </p>
+      </div>
+
+      <div class="ml-4 mt-8">
+        <p>
+          <b>"Links"</b>
+        </p>
+        <ul>
+          <li>
+            <a href="/player-statistics">"Player"statistics</a>
+          </li>
+          <li>
+            <a href="/minerals">"Minerals"</a>
+          </li>
+          <li>
+            <a href="/equipment">"Equipment"</a>
+          </li>
+          <li class="mb-2">
+            <a href="/notes">"Notes"</a>
+          </li>
+
+          <li>
+            <a href="/city">"Altara"</a>
+          </li>
+          <li>
+            <a href="/fighting-arena">"Fighting arena"</a>
+          </li>
+          <li>
+            <a href="/hospital">"Hospital"</a>
+          </li>
+          <li class="mb-2">
+            <a href="/bank">"Bank"</a>
+          </li>
+
+          <li>
+            <a href="post-office">"Post office"</a>
+            " [0]"
+          </li>
+          <li>
+            <a href="/forum">"Forum"</a>
+            " [0]"
+          </li>
+          <li>
+            <a href="/chat">"Inn"</a>
+            " [0]"
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flex-grow flex-shrink basis-80 p-4">
+      <div>
+        <p class="text-center">Player statistics</p>
+      </div>
+    </div>
+
+    <div class="w-52 border-1 border-game-border flex-grow-0">
+      <div>
+        <p class="text-center">"Game statistics"</p>
+        <p class="mb-6">"List of players in the game:"</p>
+
+        <ul>
+          <li>
+            <a href="#">"admin"</a>
+            " (1)"
+          </li>
+          <li>
+            <a href="#">"Aeris Shadowbane"</a>
+            " (2)"
+          </li>
+          <li>
+            <a href="#">"Kael Stormrider"</a>
+            " (3)"
+          </li>
+          <li>
+            <a href="#">"Lyria Moonweaver"</a>
+            " (4)"
+          </li>
+          <li>
+            <a href="#">"Draven Nightthorn"</a>
+            " (5)"
+          </li>
+          <li>
+            <a href="#">"Sylara Frostsong"</a>
+            " (6)"
+          </li>
+          <li>
+            <a href="#">"Thalric Ironflame"</a>
+            " (7)"
+          </li>
+          <li>
+            <a href="#">"Zyra Emberleaf"</a>
+            " (8)"
+          </li>
+          <li>
+            <a href="#">"Corwyn Duskbringer"</a>
+            " (9)"
+          </li>
+          <li>
+            <a href="#">"Eryndor Starforge"</a>
+            " (10)"
+          </li>
+          <li>
+            <a href="#">"Veyra Silverveil"</a>
+            " (11)"
+          </li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

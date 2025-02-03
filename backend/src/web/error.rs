@@ -28,6 +28,15 @@ pub enum Error {
 
     #[error("a handled error from the api")]
     Api((StatusCode, String)),
+
+    #[error("failed to get the session")]
+    Session(#[from] tower_sessions::session::Error),
+}
+
+impl From<(http::StatusCode, &str)> for Error {
+    fn from((status, msg): (http::StatusCode, &str)) -> Self {
+        Error::Api((status, String::from(msg)))
+    }
 }
 
 impl Error {
@@ -38,7 +47,7 @@ impl Error {
             Self::Auth(_) => StatusCode::UNAUTHORIZED,
             Self::NotFound => StatusCode::NOT_FOUND,
             Self::Unauthorized(_) => StatusCode::UNAUTHORIZED,
-            Self::InternalServer(_) | Self::AnyHow(_) | Self::Sqlx(_) => {
+            Self::Session(_) | Self::InternalServer(_) | Self::AnyHow(_) | Self::Sqlx(_) => {
                 StatusCode::INTERNAL_SERVER_ERROR
             }
         }
@@ -97,6 +106,10 @@ impl IntoResponse for Error {
             Self::Api((_, ref details)) => api::ErrorResponse {
                 ty: ErrorResponseKind::APIError,
                 details: details.clone(),
+            },
+            Self::Session(ref e) => api::ErrorResponse {
+                ty: ErrorResponseKind::SessionError,
+                details: e.to_string(),
             },
         };
 

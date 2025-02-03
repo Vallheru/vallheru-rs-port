@@ -1,5 +1,6 @@
 pub mod prelude;
 
+pub mod new_home;
 pub mod home;
 pub mod player;
 
