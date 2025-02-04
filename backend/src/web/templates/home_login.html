@@ -10,18 +10,29 @@
             <p class="text-lg text-center mt-8">
                 Step into a world of imagination and adventure. Log in to continue your journey!
             </p>
+            
+            {% if login_error is defined %}
+                <div
+                    class="mt-8 text-lg text-center text-red-500"
+                >
+                    {% if login_error == "InvalidCredentials" %}
+                        Invalid password or email
+                    {% elif login_error == "SessionSetupError" %}
+                        Session setup error
+                    {% else %}
+                        Internal error
+                    {% endif %}
+                </div>
+            {% endif %}
 
-            <div class="mt-8 text-lg text-center text-red-500">
-                Invalid passowrd or username
-            </div>
-
-            <form class="max-w-sm mx-auto mt-10">
+            <form class="max-w-sm mx-auto mt-10" method="post">
                 <div class="mb-8 {{ macros.common_css("form") }}">
                     <label for="login-email" class="text-black pr-3">
                         Email:
                     </label>
                     <input
                         type="email"
+                        name="email"
                         id="login-email"
                         class="text-black bg-transparent outline-none border-none"
                         placeholder="example@email.com"
@@ -36,6 +47,7 @@
                     </label>
                     <input
                         type="password"
+                        name="password"
                         id="login-password"
                         class="text-black bg-transparent outline-none border-none"
                         placeholder="password"

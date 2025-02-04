@@ -1,20 +1,21 @@
 pub mod error;
-use axum::{extract::{FromRequestParts, FromRef}, Router};
+use axum::{extract::{FromRef, FromRequestParts}, response::Html, Router};
 use http::request::Parts;
 pub use error::Error;
 pub mod handler;
 pub mod middleware;
+pub mod form;
 
 mod router;
 use handler::{method_not_allowed_fallback, not_found_fallback, player};
 use middleware::AuthError;
-use minijinja::Environment;
+use minijinja::{context, Environment, Value};
 use router::{api_router, game_router, static_router};
 
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use tower_sessions_sqlx_store::PostgresStore;
-use vallheru::{api::ApiError, model::Player};
+use vallheru::{api::ApiError, model::Player, utils::to_ordinal};
 use std::sync::Arc;
 
 use tower_http::cors::{Any, CorsLayer};
@@ -32,6 +33,16 @@ pub struct ApiContext {
     pub tpl_env: Environment<'static>,
 }
 
+impl ApiContext {
+    pub fn render(&self, tpl_name: &str, ctx: Value) -> Html<String> {
+        let template = self.tpl_env.get_template(tpl_name).unwrap();
+        let r = template
+            .render(ctx)
+            .unwrap();
+        Html(r)
+    }
+}
+
 
 pub type AppState = Arc<ApiContext>;
 
@@ -45,19 +56,17 @@ impl SessionData {
         self.token.is_empty()
     }
 }
-
 pub struct InGameState {
     session: Session,
     player: Option<Player>,
     data: SessionData,
-
 }
 
 impl InGameState {
     const SESSION_FIELD: &'static str = "VALLHERU_IN_GAME_DATA";
 
     /// Function returns an ApiError derivable error if not logged in
-    pub fn must_be_logged(&self) -> Result<()> {
+    pub fn must_be_logged_in(&self) -> Result<()> {
         match self.player{
             None => Err(AuthError::InvalidAuthorizationToken)?,
             Some(_) => Ok(())
@@ -72,6 +81,13 @@ impl InGameState {
         self.session.insert(Self::SESSION_FIELD, self.data.clone()).await?;
 
         Ok(())
+    }
+
+    pub fn game_context(&self) -> Value {
+        context! {
+            is_logged_in => self.must_be_logged_in().is_ok(),
+            player => self.player
+        }
     }
 }
 
@@ -122,6 +138,8 @@ where
 
 pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
     let mut env = minijinja::Environment::new();
+    env.add_function("to_ordinal", to_ordinal);
+
     minijinja_embed::load_templates!(&mut env);
 
     let session_store = PostgresStore::new(db.clone());

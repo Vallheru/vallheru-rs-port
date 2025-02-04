@@ -8,6 +8,8 @@ pub enum ErrorResponseKind {
     NotFound,
     Unauthorized,
     InternalServerError,
+    AxumError,
+    SessionError,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
