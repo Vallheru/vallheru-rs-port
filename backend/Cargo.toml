@@ -29,8 +29,14 @@ tower-sessions = "0.14.0"
 tower-sessions-sqlx-store = { version = "0.15", features = ["postgres"] }
 uuid = { version = "1", features = ["v4", "fast-rng"] }
 thiserror = "2"
+minijinja = { version = "2", features = ["builtins"] }
+minijinja-embed = "2.3.1"
 
 
 [dev-dependencies]
 anyhow = "1"
 httpc-test = "0.1.1"
+
+
+[build-dependencies]
+minijinja-embed = "2.3.1"

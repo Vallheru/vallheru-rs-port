@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        "image-home": "url('/images/home-bg.png')",
+        "image-home": "url('/public/images/home-bg.png')",
       },
       boxShadow: {
         "3xl": "0px 0px 2rem 1px #000000;",

@@ -1,0 +1,14 @@
+{% macro navigation_link(link, name, cur_page) %}
+<li class="{%- if cur_page == link -%}font-bold{%- endif -%}">
+  <a href="{{- link -}}"> {{ name }} </a>
+</li>
+{% endmacro %}
+
+{% macro common_css(css_type) -%}
+  {%- if css_type == "form" -%}
+      px-4 py-2 rounded-md border-2 border-[#1e1a20] bg-gradient-to-r from-vallheru-creme-100 to-vallheru-creme-400
+  {%- elif css_type == "button" -%}
+      bg-[#322c33] text-xl text-white rounded-full py-3 px-10 hover:text-black
+  {%- else -%}
+  {%- endif -%}
+{%- endmacro %}

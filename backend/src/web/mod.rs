@@ -8,7 +8,8 @@ pub mod middleware;
 mod router;
 use handler::{method_not_allowed_fallback, not_found_fallback, player};
 use middleware::AuthError;
-use router::{api_router, static_router};
+use minijinja::Environment;
+use router::{api_router, game_router, static_router};
 
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
@@ -28,7 +29,9 @@ pub type Result<T, E = Error> = std::result::Result<T, E>;
 pub struct ApiContext {
     pub config: Arc<Config>,
     pub db: PgPool,
+    pub tpl_env: Environment<'static>,
 }
+
 
 pub type AppState = Arc<ApiContext>;
 
@@ -118,6 +121,9 @@ where
 
 
 pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
+    let mut env = minijinja::Environment::new();
+    minijinja_embed::load_templates!(&mut env);
+
     let session_store = PostgresStore::new(db.clone());
     session_store.migrate().await?;
     let session_layer = SessionManagerLayer::new(session_store).with_secure(true);
@@ -129,6 +135,7 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
     let shared_state = Arc::new(ApiContext {
         config: Arc::new(config),
         db,
+        tpl_env: env,
     });
 
     let cors = CorsLayer::new()
@@ -140,6 +147,7 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
 
     let app = Router::new()
         .merge(static_router())
+        .merge(game_router())
         .nest("/api", api_router(shared_state.clone()))
         .with_state(shared_state)
         .method_not_allowed_fallback(method_not_allowed_fallback)

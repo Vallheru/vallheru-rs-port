@@ -1,0 +1,104 @@
+{% extends "home_template.html" %}
+
+{% block title%}Vallheru - Register{% endblock %}
+
+{% block content %}
+<div class="lg:w-3/5 md:w-full text-black alegreya-sc-medium-italic">
+    <div class="text-4xl text-center mb-4">"Enter Vallheru"</div>
+
+    <p class="text-lg">
+        "Welcome to the gateway of endless adventure and fantasy!
+        Create your account now to step into the immersive world of 
+        Vallheru, where heroes are forged, alliances are built, and 
+        legends are born. Simply provide your email address, select a 
+        unique fantasy nickname (or let our generator spark your imagination), 
+        and set a strong, secure password to protect your account. Confirm your 
+        password for added security, then click "Register" to embark on your quest." <br />
+        <br />
+        "After completing this step, an activation email will be sent to the address you
+        provided. Be sure to check your inbox (and spam folder, just in case) and follow 
+        the instructions to activate your account. Once activated, the realm of Vallheru 
+        will be yours to explore. Your adventure awaits!"
+    </p>
+
+    <form class="max-w-sm mx-auto mt-14">
+        <div class="flex flex-row mb-6 {{ macros.common_css("form") }}">
+            <label for="email" class="text-black pr-3">
+                Email:
+            </label>
+            <input
+                type="email"
+                id="email"
+                class="text-black bg-transparent outline-none border-none placeholder:text-gray-600"
+                placeholder="example@email.com"
+                required
+            />
+        </div>
+
+        <div class="flex flex-row bg-vallheru-creme-100 {{ macros.common_css("form") }}">
+            <label for="nickname" class="text-black pr-3">
+                Nick:
+            </label>
+            <input
+                type="text"
+                id="nickname"
+                class="text-black bg-transparent outline-none border-none placeholder:text-gray-600"
+                placeholder="Unique nick name"
+                bind:value=(name, set_name)
+                required
+            />
+        </div>
+
+        <div class="flex flex-row text-sm mb-4">
+            <a
+                href="#"
+                {# on:click=move |_| {
+                    set_name.set(random_name());
+                } #}
+            >
+                Generate name
+            </a>
+        </div>
+
+        <div class="flex flex-row mb-6 text-black {{ macros.common_css("form") }}">
+            <label for="pass" class="text-black pr-3">
+                Password:
+            </label>
+            <input
+                type="password"
+                id="pass"
+                class="text-black bg-transparent outline-none border-none"
+                required
+            />
+        </div>
+
+        <div class="flex flex-row mb-6 text-black {{ macros.common_css("form") }}">
+            <label for="re-pass" class="text-black pr-3">
+                Re password:
+            </label>
+            <input
+                type="password"
+                id="re-pass"
+                class="w-28 text-black bg-transparent outline-none border-none"
+                required
+            />
+        </div>
+
+        <div class="mb-12">
+            <input
+                type="checkbox"
+                id="rules"
+                class="w-6 h-6 border-none bg-vallheru-creme-100 text-black accent-vallheru-creme-300"
+            />
+            <label for="rules" class="text-2xl pl-2">
+                I accept the rules
+            </label>
+        </div>
+
+        <div class="mb-3">
+            <button class="{{ macros.common_css("button") }}">Register</button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}
