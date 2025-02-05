@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use crate::player_state::PlayerState;
 use crate::repository::player::get_player_by_token;
 use crate::web::AppState;
 use crate::web::{Error, Result};
@@ -45,4 +46,16 @@ pub async fn authorization_middleware(
     }
 
     Err(AuthError::InvalidAuthorizationToken)?
+}
+
+
+pub async fn game_authorization_middleware(
+    player_state: PlayerState,
+    req: Request,
+    next: Next,
+) -> Result<Response<Body>, Error> {
+    match player_state.must_be_logged_in() {
+        Err(e) => Err(e)?,
+        Ok(_) => Ok(next.run(req).await),
+    }
 }

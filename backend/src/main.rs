@@ -5,6 +5,8 @@ mod web;
 use web::serve;
 
 mod repository;
+mod controller;
+mod player_state;
 
 use anyhow::Context;
 use clap::Parser;

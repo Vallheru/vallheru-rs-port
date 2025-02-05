@@ -12,7 +12,7 @@ fn main() {
     println!("cargo:rerun-if-changed=assets");
     println!("cargo::rerun-if-changed=src/templates");
 
-    minijinja_embed::embed_templates!("src/web/templates");
+    minijinja_embed::embed_templates!("src/templates");
 
     std::fs::remove_dir_all("build").unwrap_or_default();
 
