@@ -6,13 +6,16 @@ use axum::{
 use tower_http::services::ServeDir;
 
 use super::{
-    handler::new_home::{get_login, get_news, get_register},
-    middleware::game_authorization_middleware,
-    AppState,
-};
-use super::{
     handler::new_home::{index, post_login},
     middleware::authorization_middleware,
+};
+use super::{
+    handler::{
+        new_home::{get_login, get_news, get_register},
+        player_statistics::get_player_statistics,
+    },
+    middleware::game_authorization_middleware,
+    AppState,
 };
 use crate::web::handler::home;
 use crate::web::handler::player::get_player;
@@ -33,6 +36,7 @@ pub fn home_router() -> Router<AppState> {
 pub fn game_router(app_state: AppState) -> Router<AppState> {
     Router::new()
         .route("/news", get(get_news))
+        .route("/player-statistics", get(get_player_statistics))
         .layer(from_fn_with_state(app_state, game_authorization_middleware))
 }
 

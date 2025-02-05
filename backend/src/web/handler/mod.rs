@@ -3,6 +3,7 @@ pub mod prelude;
 pub mod new_home;
 pub mod home;
 pub mod player;
+pub mod player_statistics;
 
 pub use crate::web::Error;
 
