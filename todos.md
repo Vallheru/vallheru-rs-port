@@ -1,0 +1,1 @@
+- Remove player protection when player is enough
