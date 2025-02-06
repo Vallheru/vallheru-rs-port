@@ -1,5 +1,4 @@
 // Credits to https://github.com/Snake4life
-use rand::random;
 
 pub fn random_name() -> String {
     let rnd_type = rand_max(5);
@@ -26,7 +25,7 @@ pub enum NickGender {
 }
 
 fn rand_max(max: usize) -> usize {
-    (random::<f32>() * max as f32).floor() as usize
+    (getrandom::u64().unwrap().div_euclid(max as u64)) as usize
 }
 
 // consumes string and returns it back

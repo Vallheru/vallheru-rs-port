@@ -2,6 +2,20 @@
 
 {% block title%}Vallheru - Register{% endblock %}
 
+{% block head_tail %}
+<script type="module">
+    import init, { generate_player_name } from '/public/vallheru_wasm.js';
+
+    async function run() {
+      
+      await init();
+      console_log(generate_player_name());
+    }
+
+    run();
+  </script>
+{% endblock %}
+
 {% block content %}
 <div class="lg:w-3/5 md:w-full text-black alegreya-sc-medium-italic">
     <div class="text-4xl text-center mb-4">"Enter Vallheru"</div>

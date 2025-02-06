@@ -1,4 +1,7 @@
-use std::{path::Path, process::Command};
+use std::{
+    path::Path,
+    process::{Command, ExitCode, ExitStatus},
+};
 
 #[allow(unused_macros)]
 macro_rules! cargo_dbg {
@@ -8,13 +11,14 @@ macro_rules! cargo_dbg {
 }
 
 fn main() {
-    println!("cargo:rerun-if-changed=templates");
-    println!("cargo:rerun-if-changed=assets");
+    println!("cargo::rerun-if-changed=assets");
     println!("cargo::rerun-if-changed=src/templates");
+    println!("cargo::rerun-if-changed=vallheru-wasm");
 
     minijinja_embed::embed_templates!("src/templates");
 
     std::fs::remove_dir_all("build").unwrap_or_default();
+    build_wasm();
 
     Command::new("bun")
         .args([
@@ -47,7 +51,41 @@ fn main() {
 
     make_files_public("build", "build");
     make_files_public("assets/static", "assets/static");
-    std::fs::remove_file("build/index.css").unwrap_or_default();
+    // std::fs::remove_file("build/index.css").unwrap_or_default();
+}
+
+fn build_wasm() {
+    cargo_dbg!("Building WASM: {:?}", std::env::current_dir().unwrap());
+    let status = Command::new("cargo")
+        .args([
+            "build",
+            "-p",
+            "vallheru-wasm",
+            "--target",
+            "wasm32-unknown-unknown",
+            "--artifact-dir",
+            "build",
+            "--release",
+            "-Z",
+            "unstable-options",
+        ])
+        .output()
+        .expect("failed to build vallheru-wasm");
+    cargo_dbg!("\t... Done: {:?}", status);
+
+    cargo_dbg!("Generating bindgen-wasm");
+    Command::new("wasm-bindgen")
+        .args([
+            "--target",
+            "web",
+            "--out-dir",
+            "./build",
+            "./build/vallheru_wasm.wasm",
+        ])
+        .status()
+        .expect("cannot generate wasm bindgen for web");
+
+    cargo_dbg!("\t... Done");
 }
 
 fn make_files_public(from_dir: &str, strip_dir: &str) {

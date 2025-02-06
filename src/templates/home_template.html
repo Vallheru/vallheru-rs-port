@@ -4,6 +4,8 @@
     <link rel="stylesheet" href="/public/index.css" />
     <link rel="icon" type="image/x-icon" href="/public/images/favicon.ico">
     <title>{% block title %}Vallheru{% endblock %}</title>
+
+    {% block head_tail %}{% endblock %}
   </head>
   <body
     class="text-zinc-400 min-h-screen w-full bg-[#d0cabd] bg-image-home bg-left-bottom bg-no-repeat bg-cover 2xl:bg-cover md:bg-contain sm:bg-contain portrait:bg-contain"
@@ -47,5 +49,7 @@
         </div>
       </div>
     </div>
+    
+    {% block body_tail %}{% endblock %}
   </body>
 </html>

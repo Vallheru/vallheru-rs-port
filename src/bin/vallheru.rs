@@ -1,4 +1,3 @@
-
 use vallheru::config::Config;
 use vallheru::web::serve;
 use anyhow::Context;
