@@ -57,18 +57,7 @@ fn run() -> XResult {
     build()?;
     publish()?;
 
-    cmd_exec(
-        "cargo",
-        [
-            "watch",
-            "-q",
-            "-c",
-            "-w",
-            "./src",
-            "-x",
-            "run --bin vallheru",
-        ],
-    )
+    cmd_exec("cargo", ["run", "--bin", "vallheru"])
 }
 
 fn publish() -> XResult {
