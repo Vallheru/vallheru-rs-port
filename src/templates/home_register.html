@@ -4,16 +4,23 @@
 
 {% block head_tail %}
 <script type="module">
-    import init, { generate_player_name } from '/public/vallheru_wasm.js';
+    import init, { generate_name } from '/public/vallheru_wasm.js';
 
     async function run() {
-      
-      await init();
-      console_log(generate_player_name());
+        await init();
+        const generate_name_handler = document.querySelector("#generate-name");
+        const name_input = document.querySelector("#nickname");
+        generate_name_handler.addEventListener("click", generate_name_into_input, false);
+
+        
+        function generate_name_into_input(event) {
+            name_input.value = generate_name();
+            event.preventDefault();
+        }
     }
 
     run();
-  </script>
+</script>
 {% endblock %}
 
 {% block content %}
@@ -58,18 +65,12 @@
                 id="nickname"
                 class="text-black bg-transparent outline-none border-none placeholder:text-gray-600"
                 placeholder="Unique nick name"
-                bind:value=(name, set_name)
                 required
             />
         </div>
 
         <div class="flex flex-row text-sm mb-4">
-            <a
-                href="#"
-                {# on:click=move |_| {
-                    set_name.set(random_name());
-                } #}
-            >
+            <a href="#" id="generate-name">
                 Generate name
             </a>
         </div>

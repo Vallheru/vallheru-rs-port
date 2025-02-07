@@ -25,7 +25,7 @@ pub enum NickGender {
 }
 
 fn rand_max(max: usize) -> usize {
-    (getrandom::u64().unwrap().div_euclid(max as u64)) as usize
+    (getrandom::u64().unwrap() % (max as u64)) as usize
 }
 
 // consumes string and returns it back
