@@ -1,9 +1,168 @@
 {% extends "game_template.html" %} {% block title%}Vallheru - Player statistics / Select religion{% endblock %}
 
+{% macro deity_description(description) %}
+  <p>{{- description -}}</p>
+{% endmacro %}
 
 {% block content %}
+
 <div>
   <p class="text-center">Player statistics / Select religion</p>
 
+  <div class="mt-3">
+
+    {% if select == "illuminati" %}
+      <p>
+        Illuminati is the supreme deity of the Vallheru pantheon. Different races envision this divine being in their own ways.
+        Among Humans and Dwarves, Illuminati takes the form of a man of their respective race, while Elves perceive the deity as an elven woman. 
+        Unlike other gods, Illuminati does not focus on a single aspect of existence but instead bestows blessings upon followers in many different ways. 
+        The sacred symbol of this deity is a white flame set against a golden diamond.
+      </p>
+    {% elif select == "karserth" %}
+      <p>
+        Followers of Karserth, much like their god, are more often found on the battlefield than in a temple. 
+        Karserth is the Lord of War, cherishing his devotees for their bravery and prowess in combat while scorning cowards. 
+        To different races, he appears in distinct forms—among Humans and Dwarves, he is seen as a mighty warrior clad in a grand, 
+        intricately adorned suit of armor, while Elves perceive him as a slender, enigmatic figure draped in a ranger’s cloak, 
+        wielding a war bow. He grants his followers strength and mastery in battle, forging them into relentless warriors. 
+        His sacred symbol is a crossed sword and arrow, representing both close and ranged combat.
+      </p>
+    {% elif select == "anariel" %}
+      <p>
+        The most mysterious goddess of the Vallheru pantheon. She is the guardian of magic and all beings who practice it. 
+        She demands that her followers continually develop their magical abilities. Mortals envision her as a female figure clad in 
+        enchanted robes, with a deep hood covering her face. An aura of immense magical power radiates from her, shimmering with arcane energy.
+        This goddess grants her followers strength and mastery in the arcane arts, empowering them with mystical abilities. Her sacred symbol, 
+        a glowing blue vortex, swirls above her, pulsing with raw magical energy.
+      </p>
+    {% elif select == "heluvald" %}
+      <p>
+        He is the most peaceful of all the gods of Vallheru, uninterested in power or bloodshed. Heluvald is the patron of craftsmen and merchants.
+        Among all races, he is depicted either as a short, bearded man wearing a blacksmith’s apron or as a handsome merchant dressed in richly 
+        adorned clothing, with a mysterious smile on his face. He supports his followers by granting them knowledge and skills in various crafts. 
+        His sacred symbol is a stack of golden coins.
+      </p>    
+    {% elif select == "tartus" %}
+      <p>
+        Tartus is one of the Fallen Gods, cast down by the Great Four. Once a wielder of immense power, he was later exiled and cursed. 
+        Millennia passed before he returned once more to the world of mortals.
+        <br /><br />
+        Tartus appears as a tall and slender elven warrior with long dark hair. In his right hand, he wields a long sword, 
+        while in his left, he holds a magical sphere of fire. His obsidian plate armor and greaves contrast starkly with his pale, 
+        flesh-toned skin. From his back sprout massive, flaming wings resembling those of a phoenix, allowing him to hover majestically in the air.
+        <br /><br />
+        A master of fire magic and the infernal planes, Tartus seized and conquered many fallen astral realms during his exile, 
+        where he bent vast legions of demons and fiends to his will. Because of this, he is also highly skilled in summoning demonic entities. 
+        Once venerated by several elven and lizardfolk tribes, he is now condemned by most races. Humans and halflings fear his demonic aura, 
+        considering him a god of evil and the underworld. Lizardfolk and dwarves reject his magic, referring to him as the God of Darkness. 
+        Only the elves still retain fragmented memories of the time when Tartus was honored by the Great Four.
+        <br /><br />
+        Despite his dark reputation, Tartus has become the patron of battle mages and fire elves, who revere his power and draw 
+        divine strength from him. Recently, the number of his followers in the world of Vallheru has been growing, especially 
+        among sorcerers and demon summoners. Additionally, Tartus is known to listen to and bless warriors skilled in melee combat, 
+        answering their battle prayers and granting them strength.
+      </p>    
+    {% elif select == "oregarl" %}
+      <p>
+        Oregarl is depicted as a strong and sturdy dwarf with broad shoulders and a prominent chest. His long, silver beard flows over his
+        gleaming plate armor, which he always wears. In his hands, he wields a massive warhammer and a shield. Upon the shield, his sacred 
+        symbol is emblazoned: a clenched fist crossed with a hammer.
+        <br /><br />
+        Over a thousand years ago, in the lands of Vallheru near the Kazad-nar mountains, a great war raged between the forces of darkness 
+        and the legions of dwarves. As evil grew stronger, dwarven priests prayed fervently, seeking their god’s blessing. 
+        Deep beneath the earth, within a sacred temple, the avatar of Oregarl manifested, summoned by the priests. 
+        He blessed the city and the valiant dwarven warriors who defended it.
+        <br /><br />
+        Despite this divine intervention, the dwarven stronghold could not withstand the relentless assault. The city fell, leaving only the 
+        temple untouched, where Oregarl’s avatar remained. The entrances were sealed with protective glyphs and runes, ensuring that no evil 
+        could ever breach its sanctum. Though the priests safeguarded the temple, they were unable to pass on their sacred knowledge, and over 
+        time, the religion was forgotten.
+        <br /><br />
+        Oregarl watches over dwarves who fight in close combat, as well as those who advance the craft of stonework, metallurgy, and blacksmithing. 
+        He teaches loyalty, perseverance, and the mastery of material craftsmanship. He bestows his blessings upon those who fight in his name 
+        against the forces of evil.
+      </p>    
+    {% elif select == "daeraell" %}
+      <p>
+        Daeraell is the Goddess of the Forsaken, the Bringer of Hope.<br>
+        Born from sorrow and woven from the weeping of mortals, Daeraell emerged as a beacon for those abandoned by fate. 
+        The elves have long preserved the tale of her creation, a legend whispered among the ancient groves and forgotten ruins.
+        <br /><br />
+        It is said that one evening, as the celestial deity Illuminati rested upon his favored glade, he reached out with his divine grasp 
+        to listen to the thoughts of the world. Within his hands, magic swirled, gathering the voices of mortals into an ethereal sphere. 
+        Yet to his great dismay, what he heard was not songs of joy nor whispers of contentment, but an ocean of sorrow—endless cries of grief, 
+        pain, and despair. The burden was too great even for a god, and so, unable to contain it, he cast it forth.
+        <br /><br />
+        The sorrow fell to the heart of the forest, pooling into a lake as dark as the abyss, its waters inky and unfathomable. 
+        A place of mourning, untouched by light. Yet Illuminati, unable to bear the thought of leaving the forsaken without hope,
+        plucked a single strand of his own hair and cast it upon the abyssal waters. From the sacred union of sorrow and divinity,
+        Daeraell was born—a goddess to carry light to the broken and forgotten.
+        <br /><br />
+        She walks the land as a tall, ethereal woman with dark brown skin, glowing white eyes, and hair so long and pale it shimmers with an otherworldly 
+        greenish aura. Wherever she treads, white lilies bloom, and swallows forever dance in her wake. The dwarves call her Nerin Snowmirth, 
+        though their forges no longer ring with her name.
+        <br /><br />
+        Though time and war sought to erase her worship, the memory of Daeraell has never fully faded. In Minas Tirth, her name was whispered once more, 
+        her faith rekindled, and with it, her presence returned to the lands of Vallheru. One legend tells of how, during a siege upon a great city, 
+        a group of orphaned children huddled together in fear, offering desperate prayers to the lost goddess. As the enemy marched upon them, Daeraell came, 
+        covering the children with her flowing hair, shrouding them from sight. When the invaders passed, the children remained—untouched, unseen, 
+        saved by the Goddess of the Forsaken.
+        <br /><br />
+        Her followers, though few, tend hidden shrines where white lily petals are ever-present, a silent testament to her presence. 
+        They believe that as long as suffering lingers in the world, so too shall Daeraell remain. Some claim she has blessed the needy with fortune, 
+        guided craftsmen’s hands so that their work may flourish, and even filled the bellies of the starving, whispering nourishment into existence.
+        <br /><br />
+        She does not demand worship, nor does she seek devotion. She is simply there, watching over the lost, the broken, and the weary—offering, 
+        in the darkest of nights, a flicker of hope.
+      </p>    
+    {% elif select == "teathe-di" %}
+      <p>
+        Teathe-di, the patroness of female thieves, is renowned for both her beauty and her storied past. Her depictions remain elusive and enigmatic. 
+        She bears the appearance of an elf, yet stands as short as a halfling. Some portray her with golden hair, gleaming like the setting sun, 
+        while others paint her locks as dark as the cloak of night. Only one detail remains constant across all depictions—her face is always adorned 
+        with a mischievous smirk, a reflection of her cunning nature.
+        <br /><br />
+        The goddess is clad in black warrior’s garments, her waist wrapped in a wide silken sash. A masterfully crafted bow is slung across her back, 
+        and the feathered fletchings of arrows peek from over her shoulder, ever ready for the perfect shot.
+        <br /><br />
+        Ancient legends tell of a time when she was a swift and deadly archer, admired by all the gods. The entire pantheon envied her grace, her charm, 
+        and her unparalleled agility. Yet, one fateful day, she revealed her true nature—a rebel, a trickster, a thief of divine caliber.
+        <br /><br />
+        Listening to the whispered prayers of the cunning and the desperate, she stole celestial artifacts from the very halls of the gods, pilfering 
+        essential astral components that fueled the power of the divine. Enraged, the gods cursed her name and cast her from their ranks, branding her 
+        the goddess of wretched rogues.
+        <br /><br />
+        Since that day, Teathe-di has embraced her exile, becoming the unseen hand behind the black dealings of thief-archers. She still hears their prayers, 
+        delighting in their cunning pursuits and reveling in their audacious exploits. From the shadows, she watches, guiding those who dare to follow her path, 
+        continuing her celestial craft in the realm of mortals with a smirk that never fades.
+      </p>
+    {% elif select == "thindil" %}
+      <p>
+        Thindil was the First King, God of Valor and Brotherhood. Once a mortal ruler, Thindil was the first king of Vallheru, uniting scattered tribes under his 
+        banner. When the old world fell, he ascended as a god, his spirit rising beyond the ruins of his lost kingdom. Now, he watches over the brave, 
+        granting his blessings to warriors who fight with honor, chieftains who protect their kin, and tribes who stand united. He is depicted as a towering warrior, 
+        clad in ancient royal armor, wielding a crowned war axe, his sacred symbol. His spectral form is said to walk beside warriors in battle, guiding their blades 
+        and whispering the oaths of old. His followers carve his mark into their weapons, believing it grants them strength and protection. Though kings may rise 
+        and fall, Thindil remains eternal, ever watching over those who live and die with honor.
+      </p>
+    {% else%}
+      <p class="mt-3">
+        Here, you may choose the faith of your character. Each deity bestows unique blessings upon their devoted followers. Choose wisely, for once your path is set, it cannot be altered.
+      </p>
+
+      <ul>
+        <li><a href="/game/player-statistics">Walk the path of the unbeliever, bound to no deity's will.</a></li>
+        <li><a href="/game/player-statistics/select-religion?select=illuminati">Illuminati</a></li>
+        <li><a href="/game/player-statistics/select-religion?select=karserth">Karserth</a></li>
+        <li><a href="/game/player-statistics/select-religion?select=anariel">Anariel</a></li>
+        <li><a href="/game/player-statistics/select-religion?select=heluvald">Heluvald</a></li>
+        <li><a href="/game/player-statistics/select-religion?select=tartus">Tartus</a></li>
+        <li><a href="/game/player-statistics/select-religion?select=oregarl">Oregarl</a></li>
+        <li><a href="/game/player-statistics/select-religion?select=daeraell">Daeraell</a></li>
+        <li><a href="/game/player-statistics/select-religion?select=teathe-di">TeatheDi</a></li>
+        <li><a href="/game/player-statistics/select-religion?select=thindil">Thindil</a></li>
+      </ul>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}

@@ -48,13 +48,24 @@ pub async fn get_select_class(
     Html(r)
 }
 
+#[derive(Deserialize, Debug)]
+pub struct SelectReligion {
+    select: Option<String>,
+    confirm: Option<i32>,
+}
+
 pub async fn get_select_religion(
     State(state): State<AppState>,
     player_state: PlayerState,
+    params: Query<SelectReligion>,
 ) -> Html<String> {
+    let selected_religion = params.select.clone().unwrap_or_default();
+
     let template = state.tpl_env.get_template("player_statistics/select_religion.html").unwrap();
     let r = template
-        .render(player_state.game_context(context! {}))
+        .render(player_state.game_context(context! {
+            select => &selected_religion,
+        }))
         .unwrap();
     
     Html(r)
