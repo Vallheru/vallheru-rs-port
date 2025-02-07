@@ -1,5 +1,5 @@
 [workspace]
-members = ["vallheru-wasm"]
+members = ["vallheru-wasm", "xtask"]
 
 [[bin]]
 name = "vallheru"
