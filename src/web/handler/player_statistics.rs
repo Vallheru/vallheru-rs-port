@@ -16,7 +16,7 @@ pub async fn get_use_ap(
     State(state): State<AppState>,
     player_state: PlayerState,
 ) -> Html<String> {
-    let template = state.tpl_env.get_template("player_statistics.html").unwrap();
+    let template = state.tpl_env.get_template("player_statistics/use_ap.html").unwrap();
     let r = template
         .render(player_state.game_context(context! {}))
         .unwrap();
@@ -28,7 +28,7 @@ pub async fn get_select_bloodline(
     State(state): State<AppState>,
     player_state: PlayerState,
 ) -> Html<String> {
-    let template = state.tpl_env.get_template("player_statistics.html").unwrap();
+    let template = state.tpl_env.get_template("player_statistics/select_bloodline.html").unwrap();
     let r = template
         .render(player_state.game_context(context! {}))
         .unwrap();
@@ -40,7 +40,7 @@ pub async fn get_select_class(
     State(state): State<AppState>,
     player_state: PlayerState,
 ) -> Html<String> {
-    let template = state.tpl_env.get_template("player_statistics.html").unwrap();
+    let template = state.tpl_env.get_template("player_statistics/select_class.html").unwrap();
     let r = template
         .render(player_state.game_context(context! {}))
         .unwrap();
@@ -52,7 +52,7 @@ pub async fn get_select_religion(
     State(state): State<AppState>,
     player_state: PlayerState,
 ) -> Html<String> {
-    let template = state.tpl_env.get_template("player_statistics.html").unwrap();
+    let template = state.tpl_env.get_template("player_statistics/select_religion.html").unwrap();
     let r = template
         .render(player_state.game_context(context! {}))
         .unwrap();
@@ -64,7 +64,7 @@ pub async fn get_select_gender(
     State(state): State<AppState>,
     player_state: PlayerState,
 ) -> Html<String> {
-    let template = state.tpl_env.get_template("player_statistics.html").unwrap();
+    let template = state.tpl_env.get_template("player_statistics/select_gender.html").unwrap();
     let r = template
         .render(player_state.game_context(context! {}))
         .unwrap();
