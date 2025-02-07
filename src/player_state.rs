@@ -5,7 +5,10 @@ use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 use crate::model::Player;
 
-use crate::{repository::{player::get_player_by_token, token::extend_token_for_player}, web::{middleware::AuthError, AppState, Error}};
+use crate::{
+    repository::{player::get_player_by_token, token::extend_token_for_player}, 
+    web::{middleware::AuthError, AppState, Error},
+};
 
 
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
@@ -26,7 +29,7 @@ impl SessionData {
 }
 
 #[derive(Debug)]
-#[allow(dead_code)]
+#[allow(dead_code)] // TODO: Fix it;
 pub struct PlayerState {
     session: Session,
     player: Option<Player>,

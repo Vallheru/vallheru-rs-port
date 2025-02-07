@@ -1,3 +1,4 @@
+use log::error;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use tower_sessions::Session;
@@ -18,13 +19,15 @@ pub enum LoginError {
 }
 
 impl From<sqlx::Error> for LoginError {
-    fn from(_value: sqlx::Error) -> Self {
+    fn from(value: sqlx::Error) -> Self {
+        error!("login_controller: {value:?}");
         Self::SqlError
     }
 }
 
 impl From<tower_sessions::session::Error> for LoginError {
-    fn from(_value: tower_sessions::session::Error) -> Self {
+    fn from(value: tower_sessions::session::Error) -> Self {
+        error!("login_controller: {value:?}");
         Self::SessionSetupError
     }
 }
@@ -34,16 +37,15 @@ pub type LoginResult<T> = Result<T, LoginError>;
 pub async fn login(session: Session,
     db: &PgPool,
     email: &str,
-    password: &str,) -> LoginResult<Player> {
-    let player = get_player_by_email(db, email, password).await;
+    password: &str,
+) -> LoginResult<Player> {
+    let player = get_player_by_email(db, email, password)
+        .await
+        .map_err(|_| LoginError::InvalidCredentials)?; // TODO: make sure this is not sqlx error: (Error::Unauthorized)
 
-    if player.is_err() {
-        return Err(LoginError::InvalidCredentials);
-    }
-
-    let player = player.unwrap();
-    let mut token = get_active_token_for_player(db, player.id).await;
-
+    let mut token = get_active_token_for_player(db, player.id)
+        .await;
+    
     if token.is_none() {
         token = create_token_for_player(db, player.id).await;
     }
@@ -53,6 +55,7 @@ pub async fn login(session: Session,
         Some(token) => {
             alter_last_login_and_login_count(db, player.id).await?;
             session.insert(PlayerState::SESSION_FIELD, SessionData::new(token)).await?;
+
             Ok(player)
         }
     }
