@@ -1,4 +1,4 @@
-use std::{env, path::Path};
+use std::{env, path::Path, process::Stdio};
 
 type DynError = Box<dyn std::error::Error>;
 type XResult = Result<(), DynError>;
@@ -136,7 +136,11 @@ fn compile_ts(artifact_dir: &str) -> XResult {
 }
 
 fn cmd_exec<const N: usize>(binary: &str, args: [&str; N]) -> XResult {
-    let output = std::process::Command::new(binary).args(args).output();
+    let output = std::process::Command::new(binary)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .args(args)
+        .output();
 
     match output {
         Ok(_) => Ok(()),

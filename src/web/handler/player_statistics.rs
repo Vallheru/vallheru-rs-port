@@ -1,5 +1,3 @@
-use axum::{extract::State, response::Html};
-
 use crate::{web::handler::prelude::*, player_state::PlayerState, web::AppState};
 
 pub async fn get_player_statistics(

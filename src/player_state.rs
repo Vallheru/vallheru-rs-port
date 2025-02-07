@@ -26,6 +26,7 @@ impl SessionData {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct PlayerState {
     session: Session,
     player: Option<Player>,

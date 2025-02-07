@@ -1,9 +1,6 @@
-use std::sync::Arc;
-
 use axum::Form;
-use minijinja::context;
 use tower_sessions::Session;
-use crate::{model::Player, controller::login_controller, player_state::PlayerState, web::{form::LoginForm, handler::prelude::*}};
+use crate::{controller::login_controller, player_state::PlayerState, web::{form::LoginForm, handler::prelude::*}};
 
 pub async fn get_news(
     State(state): State<AppState>,
