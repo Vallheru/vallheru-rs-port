@@ -26,10 +26,10 @@ axum = "0.8"
 tokio = { version = "1", features = ["full"] }
 clap = { version = "4", features = ["derive"] }
 tower-http = { version = "0.6", features = ["fs", "cors", "trace"] }
-tower-sessions = "0.14.0"
+tower-sessions = "0.14"
 tower-sessions-sqlx-store = { version = "0.15", features = ["postgres"] }
 minijinja = { version = "2", features = ["builtins"] }
-minijinja-embed = "2.3.1"
+minijinja-embed = "2.3"
 sqlx = { version = "0.8", features = [
   "chrono",
   "runtime-tokio-native-tls",
@@ -41,8 +41,8 @@ sqlx = { version = "0.8", features = [
 
 [dev-dependencies]
 anyhow = "1"
-httpc-test = "0.1.1"
+httpc-test = "0.1"
 
 
 [build-dependencies]
-minijinja-embed = "2.3.1"
+minijinja-embed = "2.3"

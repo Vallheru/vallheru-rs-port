@@ -72,6 +72,9 @@ fn run() -> XResult {
 }
 
 fn publish() -> XResult {
+    std::fs::create_dir_all("public").map_err(to_dyn_err)?;
+    std::fs::remove_dir_all("public").map_err(to_dyn_err)?;
+
     make_files_public(
         "build",
         "build",
@@ -201,7 +204,8 @@ fn make_files_public<const N: usize>(
                 std::fs::create_dir_all(parent).unwrap();
             }
 
-            if !files_list.is_empty() && files_list.contains(&entry.file_name().to_str().unwrap()) {
+            if !files_list.is_empty() && !files_list.contains(&entry.file_name().to_str().unwrap())
+            {
                 continue;
             }
 
