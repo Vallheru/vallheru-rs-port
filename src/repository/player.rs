@@ -55,3 +55,13 @@ pub async fn get_player_by_token(db: &sqlx::PgPool, token: &str) -> Option<Playe
     .map(Some)
     .unwrap_or(None)
 }
+
+pub async fn disable_player_protection(db: &sqlx::PgPool, player_id: &i32) -> sqlx::Result<()> {
+    sqlx::query(
+        r"UPDATE player SET protection=0 WHERE id=$1",
+    )
+    .bind(player_id)
+    .execute(db)
+    .await
+    .map(|_| ())
+}

@@ -50,7 +50,7 @@ CREATE TABLE player (
     last_page VARCHAR(128) NOT NULL DEFAULT '',
     ip INET DEFAULT NULL,
     gender PLAYER_GENDER NOT NULL DEFAULT '',
-    protection BOOLEAN NOT NULL DEFAULT true,
+    protection INT NOT NULL DEFAULT 3,
 
     -- game properties
     level INT NOT NULL DEFAULT 1,

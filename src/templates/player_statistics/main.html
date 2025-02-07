@@ -1,0 +1,105 @@
+{% extends "game_template.html" %} {% block title%}Vallheru - Player statistics{% endblock %}
+
+{% macro row(name, value, title="", additional_path="", additional_text="") %}
+<p title="{{- title -}}">
+  <b>{{- name -}}: </b>
+  {{- value -}}
+
+  {%- if additional_path|length > 0 %}
+    (<a href="{{- additional_path -}}">{{- additional_text -}}</a>)
+  {%- endif -%}
+</p>
+{% endmacro %}
+
+{% block content %}
+<div>
+  <p class="text-center">Player statistics</p>
+
+  <p class="my-3 text-center">
+    Welcome to your stats! Here, you can view all the details about your character in the game.
+  </p>
+
+  <div class="w-full flex flex-wrap">
+      <div class="w-1/2">
+          <p class="text-center">
+              <b>Statistics in game</b>
+          </p>
+
+          {{ row("AP", player.ap, title="Ability points", additional_path="/game/player-statistics/use-ap", additional_text="Use") }}
+          {{ row("Bloodline", player.race, title="Race", additional_path="/game/player-statistics/select-bloodline", additional_text="Select") }}
+          {{ row("Profession", player.profession, title="Class", additional_path="/game/player-statistics/select-class", additional_text="Select") }}
+          {{ row("Religion", player.religion, additional_path="/game/player-statistics/select-religion", additional_text="Select") }}
+          {{ row("Gender", player.gender, additional_path="/game/player-statistics/select-gender", additional_text="Select") }}
+          {{ row("Agility", player.agility) }}
+          {{ row("Strength", player.strength) }}
+          {{ row("Intelligence", player.intelligence) }}
+          {{ row("Wisdom", player.wisdom) }}
+          {{ row("Speed", player.speed) }}
+          {{ row("Stamina", player.stamina) }}
+          {{ row("Agility", player.agility) }}
+
+          {{ row("Mana points", player.sp, title="Spell points") }}
+          {{ row("Religion points", 0) }}
+          {{ row("Energy", [macros.print_energy(player.energy), "/", macros.print_energy(player.max_energy)]|join) }}
+          <div class="mb-8"></div>
+
+          <div class="mb-2">
+              <b>Reputation:</b>
+          </div>
+
+          <p>
+            <p class="inline"><b>Fights: </b></p>
+            <p class="inline" title="Won">
+                {{- player.fights_won -}}
+            </p>
+            <p class="inline">/</p>
+            <p class="inline" title="Lost">
+              {{- player.fights_lost -}}
+            </p>
+            <p class="inline">/</p>
+            <p class="inline" title="All">
+              {{- player.fights_won + player.fights_lost -}}
+            </p>
+          </p>
+          
+          {{ row("Last killed", "...") }}
+          {{ row("Last killed by", "...") }}
+          {{ row("Finished quests", 0) }}
+      </div>
+
+      <div class="w-1/2">
+          <div class="text-center">
+              <b>Player information</b>
+          </div>
+
+          
+          {{ row("Rank", player.rank) }}
+          {{ row("Location", "...") }}
+          {{ row("Age", "...") }}
+          {{ row("Visits", player.login_count) }}
+          {{ row("IP", player.ip) }}
+          {{ row("E-mail", player.email) }}
+
+          {% if player.protection > 0 %}
+            {{ row("Young player protection", player.protection, additional_path="/game/player-statistics/disable-protection", additional_text="Disable") }}
+          {% else %}
+            {{ row("Young player protection", "disabled") }}
+          {% endif %}
+          
+          {{ row("Tribe", "...") }}
+      </div>
+      <div class="mt-16 w-full flex flex-wrap">
+          <div class="w-1/2">
+              <div class="text-center">
+                  <b>Talents</b>
+              </div>
+          </div>
+          <div class="w-1/2">
+              <div class="text-center">
+                  <b>Bonuses</b>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

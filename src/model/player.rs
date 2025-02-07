@@ -80,7 +80,7 @@ pub struct Player {
     pub rank: PlayerRank,
     pub last_page: String,
     pub ip: Option<String>,
-    pub protection: bool,
+    pub protection: i32,
     pub gender: PlayerGender,
 
     pub last_killed: Option<i32>,

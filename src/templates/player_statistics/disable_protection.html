@@ -1,0 +1,23 @@
+{% extends "game_template.html" %} {% block title%}Vallheru - Player statistics / Disable protection{% endblock %}
+
+{% block content %}
+<div>
+  <p class="text-center">Disable protection</p>
+  
+  {% if player.protection <= 0 %}
+    <p>Your protection is no longer in effect, brave adventurer. Be wary, for the shadows now stir in search of unguarded prey. <a href="/game/player-statistics">Return</a></p>
+  {% elif confirmed %}
+    <p>You have dispelled the protective enchantment that shielded new adventurers. Henceforth, you must brave the perils of this world on your own. <a href="/game/player-statistics">Return</a></p>
+  {% else %}
+    <p class="my-3">
+      Are you certain you wish to break the sacred seal of protection? Once undone, you will stand vulnerable to the blades and cunning of other adventurers who wander these lands.
+    </p>
+
+    <div class="mt-3">
+      <ul>
+        <li><a href="/game/player-statistics/disable-protection?confirm=1">Yes</a></li>
+        <li><a href="/game/player-statistics">No</a></li>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -8,7 +8,7 @@ pub async fn get_news(
 ) -> Html<String> {
     let template = state.tpl_env.get_template("news.html").unwrap();
     let r = template
-        .render(player_state.game_context())
+        .render(player_state.game_context(context! {}))
         .unwrap();
     Html(r)
 }

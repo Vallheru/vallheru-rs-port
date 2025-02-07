@@ -1,6 +1,7 @@
 use axum::extract::{FromRef, FromRequestParts};
+use axum::response::Html;
 use http::request::Parts;
-use minijinja::{context, Value};
+use minijinja::{context, Environment, Value};
 use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 use crate::model::Player;
@@ -32,7 +33,7 @@ impl SessionData {
 #[allow(dead_code)] // TODO: Fix it;
 pub struct PlayerState {
     session: Session,
-    player: Option<Player>,
+    pub player: Option<Player>,
     data: SessionData,
 }
 
@@ -47,11 +48,25 @@ impl PlayerState {
         }
     }
 
-    pub fn game_context(&self) -> Value {
-        context! {
-            is_logged_in => self.must_be_logged_in().is_ok(),
-            player => self.player
+    pub fn game_context(&self, ctx: Value) -> Value {
+        context! { 
+            ..ctx,
+            ..context! {
+                is_logged_in => self.must_be_logged_in().is_ok(),
+                player => self.player
+            }
         }
+    }
+
+    pub fn render_error(&self, tpl_env: &Environment<'static>, error_msg: &str) -> Html<String> {
+        let template = tpl_env.get_template("game_error.html").unwrap();
+        let r = template
+            .render(self.game_context(context! {
+                error_msg => error_msg
+            }))
+            .unwrap();
+        
+        Html(r)
     }
 }
 
