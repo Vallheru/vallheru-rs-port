@@ -1,3 +1,48 @@
 [workspace]
+members = ["vallheru-wasm", "xtask"]
 
-members = ["backend", "frontend", "vallheru"]
+[[bin]]
+name = "vallheru"
+path = "src/bin/vallheru.rs"
+
+[package]
+name = "vallheru"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1"
+thiserror = "2"
+log = "0.4"
+serde = "1"
+serde_json = "1"
+bcrypt = "0.17"
+uuid = { version = "1", features = ["v4", "fast-rng"] }
+bigdecimal = { version = "0.4", features = ["serde-json"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+http = "1"
+axum = "0.8"
+tokio = { version = "1", features = ["full"] }
+clap = { version = "4", features = ["derive"] }
+tower-http = { version = "0.6", features = ["fs", "cors", "trace"] }
+tower-sessions = "0.14"
+tower-sessions-sqlx-store = { version = "0.15", features = ["postgres"] }
+minijinja = { version = "2", features = ["builtins"] }
+minijinja-embed = "2.3"
+sqlx = { version = "0.8", features = [
+  "chrono",
+  "runtime-tokio-native-tls",
+  "postgres",
+  "uuid",
+  "time",
+  "bigdecimal",
+] }
+
+[dev-dependencies]
+anyhow = "1"
+httpc-test = "0.1"
+
+
+[build-dependencies]
+minijinja-embed = "2.3"

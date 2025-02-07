@@ -20,3 +20,6 @@ backend-watch:
 
 backend-quick-dev-watch:
 	cd backend && cargo watch -q -c -w examples/ -x "run --package backend --example quick_dev"
+
+db-migrate:
+	PGPASSWORD=vallheru123 psql --host localhost --user vallheru --dbname vallheru_db -a -f ./backend/migrations/0_init.sql

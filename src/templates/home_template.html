@@ -1,0 +1,55 @@
+{% import 'home_macros.html' as macros -%}
+<html>
+  <head>
+    <link rel="stylesheet" href="/public/index.css" />
+    <link rel="icon" type="image/x-icon" href="/public/images/favicon.ico">
+    <title>{% block title %}Vallheru{% endblock %}</title>
+
+    {% block head_tail %}{% endblock %}
+  </head>
+  <body
+    class="text-zinc-400 min-h-screen w-full bg-[#d0cabd] bg-image-home bg-left-bottom bg-no-repeat bg-cover 2xl:bg-cover md:bg-contain sm:bg-contain portrait:bg-contain"
+  >
+    <div class="w-full h-full">
+      <div class="w-full h-full relative pt-12 pb-56">
+        <div>
+          <div class="w-full flex items-center">
+            <p
+              class="alegreya-sc-medium-italic text-left text-black text-5xl mr-6 ml-14"
+            >
+              Vallheru
+            </p>
+
+            <ul
+              class="w-full alegreya-sc-medium-italic flex justify-center gap-x-6 -ml-56 text-black text-3xl"
+            >
+              {{ macros.navigation_link("/", "Home", "/") }}
+              {{ macros.navigation_link("/faq", "FAQ", "/") }}
+              {{ macros.navigation_link("/rules", "Rules", "/") }}
+              {{ macros.navigation_link("/login", "Login", "/") }}
+              {{ macros.navigation_link("/register", "Register", "/") }}
+              {{ macros.navigation_link("/links", "Links", "/") }}
+            </ul>
+          </div>
+        </div>
+
+        <div
+          class="alegreya-sc-medium-italic mt-12 mb-20 text-center text-black"
+        >
+          <p class="text-6xl font-bold py-4">Welcome to Vallheru</p>
+          <p class="text-2xl">
+            A Realm of Heroes, Mysteries, and Endless Adventure!
+          </p>
+        </div>
+          
+        <div>
+          <div class="w-full flex justify-center px-8">
+            {% block content %}{% endblock %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    {% block body_tail %}{% endblock %}
+  </body>
+</html>
