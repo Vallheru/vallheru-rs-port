@@ -1,6 +1,7 @@
 use bigdecimal::BigDecimal;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use std::str::FromStr;
 
 #[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug)]
 #[sqlx(type_name = "PLAYER_RANK", rename_all = "lowercase")]
@@ -11,7 +12,7 @@ pub enum PlayerRank {
     Member,
 }
 
-#[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[sqlx(type_name = "PLAYER_GENDER", rename_all = "lowercase")]
 pub enum PlayerGender {
     #[sqlx(rename = "")]
@@ -21,7 +22,7 @@ pub enum PlayerGender {
     Female,
 }
 
-#[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[sqlx(type_name = "PLAYER_RELIGION", rename_all = "lowercase")]
 pub enum PlayerReligion {
     #[sqlx(rename = "")]
@@ -39,6 +40,37 @@ pub enum PlayerReligion {
     Thindil,
 }
 
+impl FromStr for PlayerReligion {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "" | "atheist" => Ok(Self::Atheist),
+            "illuminati" => Ok(Self::Illuminati),
+            "karserth" => Ok(Self::Karserth),
+            "anariel" => Ok(Self::Anariel),
+            "heluvald" => Ok(Self::Heluvald),
+            "tartus" => Ok(Self::Tartus),
+            "oregarl" => Ok(Self::Oregarl),
+            "daeraell" => Ok(Self::Daeraell),
+            "teathe-di" | "teathedi" => Ok(Self::TeatheDi),
+            "thindil" => Ok(Self::Thindil),
+            _ => Err(()),
+        }
+    }
+}
+
+//   <ul>
+//     <li>- <a href="/game/player-statistics/select-religion?select=illuminati">Illuminati</a></li>
+//     <li>- <a href="/game/player-statistics/select-religion?select=karserth">Karserth</a></li>
+//     <li>- <a href="/game/player-statistics/select-religion?select=anariel">Anariel</a></li>
+//     <li>- <a href="/game/player-statistics/select-religion?select=heluvald">Heluvald</a></li>
+//     <li>- <a href="/game/player-statistics/select-religion?select=tartus">Tartus</a></li>
+//     <li>- <a href="/game/player-statistics/select-religion?select=oregarl">Oregarl</a></li>
+//     <li>- <a href="/game/player-statistics/select-religion?select=daeraell">Daeraell</a></li>
+//     <li>- <a href="/game/player-statistics/select-religion?select=teathe-di">TeatheDi</a></li>
+//     <li>- <a href="/game/player-statistics/select-religion?select=thindil">Thindil</a></li>
+//     <li>- <a href="/game/player-statistics">Remain an Atheist</a></li>
 #[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug)]
 #[sqlx(type_name = "PLAYER_RACE", rename_all = "lowercase")]
 pub enum PlayerRace {

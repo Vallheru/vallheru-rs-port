@@ -58,11 +58,12 @@ impl PlayerState {
         }
     }
 
-    pub fn render_error(&self, tpl_env: &Environment<'static>, error_msg: &str) -> Html<String> {
+    pub fn render_error(&self, tpl_env: &Environment<'static>, error_msg: &str, return_link: &str) -> Html<String> {
         let template = tpl_env.get_template("game_error.html").unwrap();
         let r = template
             .render(self.game_context(context! {
-                error_msg => error_msg
+                error_msg => error_msg,
+                return_link => return_link,
             }))
             .unwrap();
         

@@ -1,6 +1,6 @@
 use crate::web::Error;
 
-use crate::model::Player;
+use crate::model::{self, Player};
 
 pub async fn alter_last_login_and_login_count(
     db: &sqlx::PgPool,
@@ -56,10 +56,21 @@ pub async fn get_player_by_token(db: &sqlx::PgPool, token: &str) -> Option<Playe
     .unwrap_or(None)
 }
 
-pub async fn disable_player_protection(db: &sqlx::PgPool, player_id: &i32) -> sqlx::Result<()> {
+pub async fn disable_player_protection(db: &sqlx::PgPool, player_id: i32) -> sqlx::Result<()> {
     sqlx::query(
         r"UPDATE player SET protection=0 WHERE id=$1",
     )
+    .bind(player_id)
+    .execute(db)
+    .await
+    .map(|_| ())
+}
+
+pub async fn set_religion(db: &sqlx::PgPool, player_id: i32, religion: model::player::PlayerReligion) -> sqlx::Result<()> {
+    sqlx::query(
+        r"UPDATE player SET religion=$1 WHERE id=$2",
+    )
+    .bind(religion)
     .bind(player_id)
     .execute(db)
     .await

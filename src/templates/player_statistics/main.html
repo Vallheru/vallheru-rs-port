@@ -28,7 +28,12 @@
           {{ row("AP", player.ap, title="Ability points", additional_path="/game/player-statistics/use-ap", additional_text="Use") }}
           {{ row("Bloodline", player.race, title="Race", additional_path="/game/player-statistics/select-bloodline", additional_text="Select") }}
           {{ row("Profession", player.profession, title="Class", additional_path="/game/player-statistics/select-class", additional_text="Select") }}
-          {{ row("Religion", player.religion, additional_path="/game/player-statistics/select-religion", additional_text="Select") }}
+          {% if player.religion | length > 0%}
+            {{ row("Religion", player.religion) }}
+          {% else %}
+            {{ row("Religion", player.religion, additional_path="/game/player-statistics/select-religion", additional_text="Select") }}
+          {% endif %}
+
           {{ row("Gender", player.gender, additional_path="/game/player-statistics/select-gender", additional_text="Select") }}
           {{ row("Agility", player.agility) }}
           {{ row("Strength", player.strength) }}
