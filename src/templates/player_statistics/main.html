@@ -26,22 +26,29 @@
           </p>
 
           {{ row("AP", player.ap, title="Ability points", additional_path="/game/player-statistics/use-ap", additional_text="Use") }}
-          {{ row("Bloodline", player.race, title="Race", additional_path="/game/player-statistics/select-bloodline", additional_text="Select") }}
-          {{ row("Profession", player.profession, title="Class", additional_path="/game/player-statistics/select-class", additional_text="Select") }}
-          {% if player.religion | length > 0%}
-            {{ row("Religion", player.religion) }}
+
+          {% if player.race|lower == "unknown" %}
+            {{ row("Bloodline", "...", additional_path="/game/player-statistics/select-bloodline", additional_text="Select") }}
           {% else %}
+            {{ row("Bloodline", player.race) }}
+          {% endif %}
+
+          {{ row("Profession", player.profession, title="Class", additional_path="/game/player-statistics/select-class", additional_text="Select") }}
+
+          {% if player.religion|lower == "atheist" %}
             {{ row("Religion", player.religion, additional_path="/game/player-statistics/select-religion", additional_text="Select") }}
+          {% else %}
+            {{ row("Religion", player.religion) }}
           {% endif %}
 
           {{ row("Gender", player.gender, additional_path="/game/player-statistics/select-gender", additional_text="Select") }}
-          {{ row("Agility", player.agility) }}
-          {{ row("Strength", player.strength) }}
-          {{ row("Intelligence", player.intelligence) }}
-          {{ row("Wisdom", player.wisdom) }}
-          {{ row("Speed", player.speed) }}
-          {{ row("Stamina", player.stamina) }}
-          {{ row("Agility", player.agility) }}
+          {{ row("Agility", to_game_float(player.agility)) }}
+          {{ row("Strength", to_game_float(player.strength)) }}
+          {{ row("Intelligence", to_game_float(player.intelligence)) }}
+          {{ row("Wisdom", to_game_float(player.wisdom)) }}
+          {{ row("Speed", to_game_float(player.speed)) }}
+          {{ row("Stamina", to_game_float(player.stamina)) }}
+          {{ row("Agility", to_game_float(player.agility)) }}
 
           {{ row("Mana points", player.sp, title="Spell points") }}
           {{ row("Religion points", 0) }}

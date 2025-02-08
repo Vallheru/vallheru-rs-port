@@ -15,6 +15,14 @@ pub fn to_ordinal(num: u32) -> String {
     }
 }
 
+pub fn u64_to_game_float(num: u64) -> f64 {
+    num as f64 / 100.0
+}
+
+pub fn i64_to_game_float(num: i64) -> f64 {
+    num as f64 / 100.0
+}
+
 #[cfg(test)]
 mod test {
     #[test]
@@ -45,5 +53,20 @@ mod test {
 
         assert_eq!(String::from("101202nd"), super::to_ordinal(101202));
         assert_eq!(String::from("1000009th"), super::to_ordinal(1000009));
+    }
+
+    #[test]
+    fn test_to_game_float() {
+        assert_eq!(1.0, super::u64_to_game_float(100));
+        assert_eq!(1.0, super::i64_to_game_float(100));
+
+        assert_eq!(0.0, super::u64_to_game_float(0));
+        assert_eq!(0.0, super::i64_to_game_float(0));
+
+        assert_eq!(101.12, super::u64_to_game_float(10112));
+        assert_eq!(101.12, super::i64_to_game_float(10112));
+
+        assert_eq!(1.45, super::u64_to_game_float(145));
+        assert_eq!(1.45, super::i64_to_game_float(145));
     }
 }

@@ -3,6 +3,18 @@ use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use std::str::FromStr;
 
+pub struct RaceStatisticsBonus {
+    // 100 == 1
+    pub agility: i32,
+    pub strength: i32,
+    pub intelligence: i32,
+    pub wisdom: i32,
+    pub speed: i32,
+    pub stamina: i32,
+
+    pub max_hp_per_level: i32,
+}
+
 #[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug)]
 #[sqlx(type_name = "PLAYER_RANK", rename_all = "lowercase")]
 pub enum PlayerRank {
@@ -60,18 +72,7 @@ impl FromStr for PlayerReligion {
     }
 }
 
-//   <ul>
-//     <li>- <a href="/game/player-statistics/select-religion?select=illuminati">Illuminati</a></li>
-//     <li>- <a href="/game/player-statistics/select-religion?select=karserth">Karserth</a></li>
-//     <li>- <a href="/game/player-statistics/select-religion?select=anariel">Anariel</a></li>
-//     <li>- <a href="/game/player-statistics/select-religion?select=heluvald">Heluvald</a></li>
-//     <li>- <a href="/game/player-statistics/select-religion?select=tartus">Tartus</a></li>
-//     <li>- <a href="/game/player-statistics/select-religion?select=oregarl">Oregarl</a></li>
-//     <li>- <a href="/game/player-statistics/select-religion?select=daeraell">Daeraell</a></li>
-//     <li>- <a href="/game/player-statistics/select-religion?select=teathe-di">TeatheDi</a></li>
-//     <li>- <a href="/game/player-statistics/select-religion?select=thindil">Thindil</a></li>
-//     <li>- <a href="/game/player-statistics">Remain an Atheist</a></li>
-#[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, sqlx::Type, Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[sqlx(type_name = "PLAYER_RACE", rename_all = "lowercase")]
 pub enum PlayerRace {
     #[sqlx(rename = "")]
@@ -139,12 +140,12 @@ pub struct Player {
     pub race: PlayerRace,
     pub profession: PlayerClass,
     pub religion: PlayerReligion,
-    pub agility: BigDecimal,
-    pub strength: BigDecimal,
-    pub intelligence: BigDecimal,
-    pub wisdom: BigDecimal,
-    pub speed: BigDecimal,
-    pub stamina: BigDecimal,
+    pub agility: i32,
+    pub strength: i32,
+    pub intelligence: i32,
+    pub wisdom: i32,
+    pub speed: i32,
+    pub stamina: i32,
 }
 
 // #[cfg(test)]

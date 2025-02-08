@@ -4,6 +4,7 @@ use sqlx::PgPool;
 use tower_sessions::Session;
 use crate::model::Player;
 
+use crate::web::Error;
 use crate::{player_state::{PlayerState, SessionData}, repository::{player::{alter_last_login_and_login_count, get_player_by_email}, token::{create_token_for_player, get_active_token_for_player}}};
 
 #[derive(thiserror::Error, Serialize, Deserialize, Debug)]
@@ -40,8 +41,17 @@ pub async fn login(session: Session,
     password: &str,
 ) -> LoginResult<Player> {
     let player = get_player_by_email(db, email, password)
-        .await
-        .map_err(|_| LoginError::InvalidCredentials)?; // TODO: make sure this is not sqlx error: (Error::Unauthorized)
+        .await;
+
+
+    if let Err(e) = player {
+        println!("{:?}", e);
+
+        return Err(LoginError::InvalidCredentials);
+    }
+
+    let player = player.unwrap();
+        // .map_err(|_| )?; // TODO: make sure this is not sqlx error: (Error::Unauthorized)
 
     let mut token = get_active_token_for_player(db, player.id)
         .await;

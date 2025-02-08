@@ -14,7 +14,7 @@ use router::{api_router, game_router, home_router, static_router};
 
 use anyhow::Context;
 use tower_sessions_sqlx_store::PostgresStore;
-use crate::util::number::to_ordinal;
+use crate::util::number::{to_ordinal, i64_to_game_float};
 use std::sync::Arc;
 
 use tower_http::cors::{Any, CorsLayer};
@@ -48,6 +48,7 @@ pub type AppState = Arc<ApiContext>;
 pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
     let mut env = minijinja::Environment::new();
     env.add_function("to_ordinal", to_ordinal);
+    env.add_function("to_game_float", i64_to_game_float);
 
     minijinja_embed::load_templates!(&mut env);
 

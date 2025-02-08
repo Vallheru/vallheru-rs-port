@@ -25,13 +25,23 @@ pub async fn get_use_ap(
     Html(r)
 }
 
+#[derive(Deserialize, Debug)]
+pub struct SelectBloodlineQuery {
+    race: Option<String>,
+    confirm: Option<i32>,
+}
 pub async fn get_select_bloodline(
     State(state): State<AppState>,
     player_state: PlayerState,
+    params: Query<SelectBloodlineQuery>,
 ) -> Html<String> {
+    let selected_race = params.race.clone().unwrap_or_default();
+    
     let template = state.tpl_env.get_template("player_statistics/select_bloodline.html").unwrap();
     let r = template
-        .render(player_state.game_context(context! {}))
+        .render(player_state.game_context(context! {
+            select => &selected_race,
+            confirmation => params.confirm.is_some(),}))
         .unwrap();
     
     Html(r)
